@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.windsurf/
+.claude/
+.agents/
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+/app/generated/prisma
