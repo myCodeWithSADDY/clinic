@@ -40,7 +40,13 @@ export default async function PatientPage({ params }: Props) {
       </div>
 
       <div className="grid items-start gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
-        <PatientProfile patient={patientProfile} />
+        <PatientProfile
+          patient={{
+            ...patientProfile,
+            dateOfBirth: patientProfile.dateOfBirth.toISOString(),
+            createdAt: patientProfile.createdAt.toISOString(),
+          }}
+        />
         <PatientPrescriptions
           patientId={patient.id}
           patientName={patient.fullName}

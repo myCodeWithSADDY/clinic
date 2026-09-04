@@ -6,19 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DatePickerField } from "@/components/date-picker";
+import { Patient } from "@/app/types/patient.types";
 
-type Patient = {
-  id: string;
-  fullName: string;
-  phone: string;
-  dateOfBirth: Date;
-  gender: "MALE" | "FEMALE" | null;
-  weightKg: number | null;
-  cnic: string | null;
-  houseNo: string | null;
-  area: string | null;
-  city: string | null;
-};
 
 type Props = {
   patient: Patient;

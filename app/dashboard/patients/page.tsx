@@ -133,6 +133,7 @@ export default function PatientsPage() {
                   <EditPatientForm
                     patient={patient}
                     onSuccess={() => {
+                      
                       close();
                       router.refresh();
                     }}

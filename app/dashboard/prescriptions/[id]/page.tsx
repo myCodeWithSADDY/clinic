@@ -73,10 +73,20 @@ export default async function PrescriptionViewPage({ params }: PageProps) {
         >
           {(close) => (
             <EditPrescriptionForm
-              prescription={prescription}
+              prescription={{
+                ...prescription,
+
+                since: prescription.since.toISOString(),
+                createdAt: prescription.createdAt.toISOString(),
+                updatedAt: prescription.updatedAt.toISOString(),
+
+                medications: prescription.medications.map((medication) => ({
+                  ...medication,
+                  createdAt: medication.createdAt.toISOString(),
+                })),
+              }}
               onSuccess={() => {
                 close();
-                
               }}
             />
           )}

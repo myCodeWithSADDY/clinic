@@ -21,22 +21,9 @@ import { removePatientAction } from "@/app/dashboard/patients/actions";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Patient } from "@/app/types/patient.types";
 
-type Patient = {
-  id: string;
-  fullName: string;
-  phone: string;
-  dateOfBirth: Date;
-  gender: "MALE" | "FEMALE" | null;
-  weightKg: number | null;
-  cnic: string | null;
-  houseNo: string | null;
-  area: string | null;
-  city: string | null;
-  address: string | null;
-  createdAt: Date;
-  weight: number | null;
-};
+
 
 interface PatientProfileProps {
   patient: Patient;
@@ -115,7 +102,7 @@ const PatientProfile = ({ patient, className }: PatientProfileProps) => {
             </div>
 
             <span className="max-w-50 text-right font-medium">
-              {patient.address || "—"}
+              {patient.area || "—"}
             </span>
           </div>
 
@@ -127,7 +114,7 @@ const PatientProfile = ({ patient, className }: PatientProfileProps) => {
             </div>
 
             <span className="font-medium">
-              {patient.weight != null ? `${patient.weight} kg` : "—"}
+              {patient.weightKg != null ? `${patient.weightKg} kg` : "—"}
             </span>
           </div>
         </div>

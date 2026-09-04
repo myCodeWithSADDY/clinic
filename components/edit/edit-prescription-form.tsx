@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-
-import type { Prescription } from "@/app/dashboard/prescriptions/page";
 import type { UpdatePrescriptionInput } from "@/app/validations/prescription.schema";
 
 import {
@@ -47,6 +45,7 @@ import { DatePickerField } from "@/components/date-picker";
 
 import { MEDICINE_TYPE_LABELS, MEDICINE_TYPES } from "@/app/types/medsTypes";
 import { toast } from "sonner";
+import { Prescription } from "@/app/types/prescription.types";
 
 const MEDICINE_TYPE_ICONS: Record<
   (typeof MEDICINE_TYPES)[number],

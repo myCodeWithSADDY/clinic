@@ -20,16 +20,6 @@ function formatDateTime(date: Date) {
   });
 }
 
-function buildAddress(patient: {
-  houseNo: string | null;
-  area: string | null;
-  city: string | null;
-}) {
-  return (
-    [patient.houseNo, patient.area, patient.city].filter(Boolean).join(", ") ||
-    null
-  );
-}
 
 export default async function AppointmentDetailPage({ params }: Props) {
   const { id } = await params;
@@ -56,7 +46,6 @@ export default async function AppointmentDetailPage({ params }: Props) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
-
         {isWalkIn ? (
           <Card>
             <CardHeader>
@@ -83,12 +72,14 @@ export default async function AppointmentDetailPage({ params }: Props) {
               id: appointment.patient!.id,
               fullName: appointment.patient!.fullName,
               phone: appointment.patient!.phone,
-              dateOfBirth: appointment.patient!.dateOfBirth,
+              dateOfBirth: appointment.patient!.dateOfBirth.toISOString(),
               gender: appointment.patient!.gender,
               cnic: appointment.patient!.cnic,
-              weight: appointment.patient!.weightKg,
-              address: buildAddress(appointment.patient!),
-              createdAt: appointment.patient!.createdAt,
+              weightKg: appointment.patient!.weightKg,
+              houseNo: appointment.patient!.houseNo,
+              area: appointment.patient!.area,
+              city: appointment.patient!.city,
+              createdAt: appointment.patient!.createdAt.toISOString(),
             }}
           />
         )}
