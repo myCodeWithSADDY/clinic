@@ -1,7 +1,7 @@
 // app/dashboard/appointments/new/page.tsx
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { BasicScheduler } from "calendarkit-basic";
 import type { CalendarEvent, ViewType } from "calendarkit-basic";
@@ -31,7 +31,7 @@ type PatientSummary = {
   phone: string;
 };
 
-export default function NewAppointmentPage() {
+function NewAppointmentPageContent() {
   const searchParams = useSearchParams();
   const patientId = searchParams.get("patientId"); // present = existing patient, absent = walk-in
 
@@ -62,6 +62,7 @@ export default function NewAppointmentPage() {
     fetch(`/api/appointments?from=${from.toISOString()}&to=${to.toISOString()}`)
       .then((res) => (res.ok ? res.json() : { data: [] }))
       .then((result) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const mapped: CalendarEvent[] = result.data.map((appt: any) => ({
           id: appt.id,
           title: appt.patient?.fullName ?? appt.walkInName ?? "Booked",
@@ -108,6 +109,18 @@ export default function NewAppointmentPage() {
     </div>
   );
 }
+
+
+
+
+export default function NewAppointmentPage() {
+  return (
+    <Suspense fallback={<div>Loading appointment scheduler...</div>}>
+      <NewAppointmentPageContent />
+    </Suspense>
+  );
+}
+
 
 type AppointmentState = { error?: string } | null;
 

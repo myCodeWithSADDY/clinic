@@ -29,15 +29,20 @@ function Vital({ label, value }: { label: string; value: string | null }) {
 
 export default async function PrescriptionViewPage({ params }: PageProps) {
   const { id } = await params;
-    let prescription;
-  try {
-    prescription = await PrescriptionService.findOne(id)
-  } catch (error) {
-    if (error instanceof Error && error.message === "PRESCRIPTION_NOT_FOUND") {
-      notFound();
-    }
-    throw error;
-  }
+   const prescription = await (async () => {
+     try {
+       return await PrescriptionService.findOne(id);
+     } catch (error) {
+       if (
+         error instanceof Error &&
+         error.message === "PRESCRIPTION_NOT_FOUND"
+       ) {
+         notFound();
+       }
+
+       throw error;
+     }
+   })();
 
  
 

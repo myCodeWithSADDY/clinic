@@ -1,11 +1,11 @@
-
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PrescriptionForm from "@/components/create-prescription-form";
 import { createPrescriptionAction } from "../actions";
 
-export default function NewPrescriptionPage() {
+function NewPrescriptionPageContent() {
   const searchParams = useSearchParams();
   const patientId = searchParams.get("patientId");
 
@@ -29,8 +29,15 @@ export default function NewPrescriptionPage() {
       <PrescriptionForm
         patientId={patientId}
         action={createPrescriptionAction}
-       
       />
     </div>
+  );
+}
+
+export default function NewPrescriptionPage() {
+  return (
+    <Suspense fallback={<div>Loading prescription...</div>}>
+      <NewPrescriptionPageContent />
+    </Suspense>
   );
 }
