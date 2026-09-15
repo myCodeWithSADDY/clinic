@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createAppointmentAction } from "../actions";
+import { Card, CardContent } from "@/components/ui/card";
 
 type PatientSummary = {
   id: string;
@@ -33,7 +34,7 @@ type PatientSummary = {
 
 function NewAppointmentPageContent() {
   const searchParams = useSearchParams();
-  const patientId = searchParams.get("patientId"); // present = existing patient, absent = walk-in
+  const patientId = searchParams.get("patientId");
 
   const [state, formAction, isPending] = useActionState(
     createAppointmentAction,
@@ -78,7 +79,7 @@ function NewAppointmentPageContent() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-semibold">Book Appointment</h1>
+        <h1 className="text-xl font-semibold sm:text-2xl">Book Appointment</h1>
         <p className="text-sm text-muted-foreground">
           {patientId
             ? patient
@@ -88,30 +89,31 @@ function NewAppointmentPageContent() {
         </p>
       </div>
 
-      <BasicScheduler
-        events={events}
-        view={view}
-        onViewChange={setView}
-        date={calendarDate}
-        onDateChange={setCalendarDate}
-        renderEventForm={({ isOpen, onClose, initialDate }) => (
-          <AppointmentFormDialog
-            isOpen={isOpen}
-            onClose={onClose}
-            initialDate={initialDate}
-            patientId={patientId}
-            formAction={formAction}
-            state={state}
-            isPending={isPending}
-          />
-        )}
-      />
+      <Card className="w-full min-w-0 overflow-hidden">
+        <CardContent className="min-w-0 overflow-x-auto p-0">
+        <BasicScheduler
+          events={events}
+          view={view}
+          onViewChange={setView}
+          date={calendarDate}
+          onDateChange={setCalendarDate}
+          renderEventForm={({ isOpen, onClose, initialDate }) => (
+            <AppointmentFormDialog
+              isOpen={isOpen}
+              onClose={onClose}
+              initialDate={initialDate}
+              patientId={patientId}
+              formAction={formAction}
+              state={state}
+              isPending={isPending}
+            />
+          )}
+        />
+        </CardContent>
+      </Card>
     </div>
   );
 }
-
-
-
 
 export default function NewAppointmentPage() {
   return (
@@ -120,7 +122,6 @@ export default function NewAppointmentPage() {
     </Suspense>
   );
 }
-
 
 type AppointmentState = { error?: string } | null;
 
@@ -159,7 +160,7 @@ function AppointmentFormDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Book Appointment</DialogTitle>
           {initialDate && (
@@ -210,7 +211,7 @@ function AppointmentFormDialog({
                     disabled={isPending}
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div className="grid gap-2">
                     <Label>Gender</Label>
                     <Select
@@ -287,6 +288,19 @@ function AppointmentFormDialog({
           <div className="grid gap-2">
             <Label htmlFor="notes">Notes</Label>
             <Textarea id="notes" name="notes" rows={2} disabled={isPending} />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="fee">Fee (optional)</Label>
+            <Input
+              id="fee"
+              name="fee"
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="e.g. 1500"
+              disabled={isPending}
+            />
           </div>
 
           <Button type="submit" disabled={isPending}>

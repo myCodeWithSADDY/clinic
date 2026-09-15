@@ -65,7 +65,6 @@ export function PatientPrescriptions({
       description={`View and manage prescriptions for ${patientName}.`}
       addAction={
         <Button asChild>
-        
           <Link href={`/dashboard/prescriptions/new?patientId=${patientId}`}>
             <Plus className="mr-2 size-4" />
             Create Prescription
@@ -102,6 +101,13 @@ export function PatientPrescriptions({
             <DropdownMenuItem asChild>
               <Link href={`/dashboard/prescriptions/${prescription.id}/edit`}>
                 Edit prescription
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/dashboard/prescriptions/${prescription.id}/invoice`}
+              >
+                Print invoice
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

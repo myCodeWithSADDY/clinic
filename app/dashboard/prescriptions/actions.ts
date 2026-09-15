@@ -1,10 +1,10 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { PrescriptionService } from "@/app/services/prescription.service";
 import { createPrescriptionSchema } from "@/app/validations/prescription.schema";
-import { verifyToken } from "@/app/lib/auth";
+import { requireAuth } from "@/app/lib/require-auth";
 import { getActionError } from "@/app/lib/actionError";
+import { invalidateCache } from "@/app/lib/cache";
 
 export type PrescriptionState = { error?: string; success?: string } | null;
 
@@ -12,19 +12,13 @@ export async function createPrescriptionAction(
   prevState: PrescriptionState,
   formData: FormData,
 ): Promise<PrescriptionState> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-
-  if (!token) {
-    return { error: "You must be logged in." };
-  }
-
   let userId: string;
   try {
-    const payload = await verifyToken(token);
-    userId = payload.sub as string;
+    const payload = await requireAuth();
+
+    userId = payload.userId as string;
   } catch {
-    return { error: "Your session has expired. Please log in again." };
+    return { error: "You must be logged in." };
   }
 
   let medications: unknown;
@@ -49,7 +43,9 @@ export async function createPrescriptionAction(
     rr: formData.get("rr") || undefined,
     clinicalNotes: formData.get("clinicalNotes"),
     medications,
+    fee: formData.get("fee") || undefined,
   };
+
   const validation = createPrescriptionSchema.safeParse(raw);
   if (!validation.success) {
     const firstError = validation.error.issues[0];
@@ -58,21 +54,32 @@ export async function createPrescriptionAction(
 
   try {
     await PrescriptionService.create(validation.data, userId);
-    return { success: "Prescription created successfully" };
   } catch (error: unknown) {
     return { error: getActionError(error, "unable to create Prescription") };
   }
+
+  await invalidateCache("dashboard:*");
+
+  return { success: "Prescription created successfully" };
 }
+
 export async function removePrescriptionAction(id: string) {
   try {
-    await PrescriptionService.remove(id);
+    const payload = await requireAuth();
+    if (payload.role !== "DOCTOR") {
+      return { error: "Only doctors can delete prescriptions." };
+    }
 
-    return {
-      success: "Prescription deleted successfully",
-    };
+    await PrescriptionService.remove(id);
   } catch (error) {
     return {
       error: getActionError(error, "Unable to delete prescription"),
     };
   }
+
+  await invalidateCache("dashboard:*");
+
+  return {
+    success: "Prescription deleted successfully",
+  };
 }

@@ -28,8 +28,8 @@ export async function GET(req: NextRequest) {
 
     const result = await AppointmentService.findAll({ page, limit, search });
     return NextResponse.json(result, { status: 200 });
-  } catch (error: any) {
-    if (error.message === "UNAUTHORIZED") {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.json(

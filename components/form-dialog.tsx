@@ -29,7 +29,7 @@ export function FormDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-      <DialogContent className="max-h-[90vh] w-[95vw] max-w-5xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] max-w-5xl overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
 

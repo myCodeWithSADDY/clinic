@@ -39,4 +39,5 @@ export type Prescription = {
     fullName: string;
     phone: string;
   };
+  pendingTaskId?: string;
 };

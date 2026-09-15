@@ -5,6 +5,7 @@ const secret = new TextEncoder().encode(process.env.JWT_SECRET);
 
 export type JWTPayload = {
   userId: string;
+  sub?: string;
   role: Role;
   email: string;
 };

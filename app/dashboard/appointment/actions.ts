@@ -8,6 +8,7 @@ import {
   createAppointmentSchema,
   updateAppointmentSchema,
 } from "@/app/validations/appointment.schema";
+import { invalidateCache } from "@/app/lib/cache";
 
 export type AppointmentState = { error?: string } | null;
 
@@ -28,6 +29,7 @@ export async function createAppointmentAction(
     complaints: formData.get("complaints") || undefined,
     notes: formData.get("notes") || undefined,
     recurring: formData.get("recurring") || undefined,
+    fee: formData.get("fee") || undefined,
     status: "CONFIRMED" as const,
   };
 
@@ -38,14 +40,17 @@ export async function createAppointmentAction(
 
   try {
     await AppointmentService.create(validation.data);
-  } catch (error: any) {
-    if (error.message === "PATIENT_NOT_FOUND") {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
       return { error: "Selected patient no longer exists." };
+    }
+    if (error instanceof Error && error.message === "TIME_SLOT_TAKEN") {
+      return { error: "This time slot is already booked." };
     }
     console.error(error);
     return { error: "Something went wrong. Please try again." };
   }
-
+await invalidateCache("dashboard:*");
   redirect("/dashboard/appointment");
 }
 
@@ -60,8 +65,8 @@ export async function updateAppointmentStatusAction(
 
   try {
     await AppointmentService.update(id, validation.data);
-  } catch (error: any) {
-    if (error.message === "APPOINTMENT_NOT_FOUND") {
+  } catch (error: unknown) {
+    if (error instanceof Error && error.message === "APPOINTMENT_NOT_FOUND") {
       return { error: "Appointment not found" };
     }
     console.error(error);

@@ -1,37 +1,54 @@
 // prisma/seed.ts
-import 'dotenv/config';
+import "dotenv/config";
 import { PrismaClient, Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-
 const adapter = new PrismaPg({
   connectionString: process.env.DIRECT_URL!,
 });
-const prisma = new PrismaClient({adapter});
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const password = await bcrypt.hash("fahad@123", 12);
+  const doctorPassword = await bcrypt.hash("fahad@123", 12);
 
   await prisma.user.upsert({
     where: {
       email: "Faddie03@gmail.com",
     },
-
     update: {
-      password,
+      password: doctorPassword,
     },
-
     create: {
       fullName: "Dr. Fahad Fayyaz",
       email: "Faddie03@gmail.com",
-      password,
+      password: doctorPassword,
       role: Role.DOCTOR,
       phone: "923317559660",
     },
   });
 
   console.log("Doctor user created successfully");
+
+  const receptionistPassword = await bcrypt.hash("shahbaz@123", 12);
+
+  await prisma.user.upsert({
+    where: {
+      email: "shahbaz@gmail.com",
+    },
+    update: {
+      password: receptionistPassword,
+    },
+    create: {
+      fullName: "Shahbaz",
+      email: "shahbaz@gmail.com",
+      password: receptionistPassword,
+      role: Role.RECEPTIONIST,
+      phone: "923000000000",
+    },
+  });
+
+  console.log("Receptionist user created successfully");
 }
 
 main()

@@ -64,8 +64,8 @@ export const createPrescriptionSchema = z.object({
   spo2: z.string().optional(),
   rr: z.string().optional(),
 
-  clinicalNotes: z.string().min(1, "Clinical notes are required"),
-
+  clinicalNotes: z.string().optional().default(""),
+  fee: z.coerce.number().min(0).optional().nullable(),
   medications: z.array(medicationSchema).min(1, "Add at least one medicine"),
 });
 export const updatePrescriptionSchema = createPrescriptionSchema.partial();

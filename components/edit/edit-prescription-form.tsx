@@ -261,7 +261,7 @@ toast.success("Prescription updated successfully");
       <section className="flex flex-col gap-4">
         <h2 className="text-sm font-semibold text-foreground">Diagnosis</h2>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="grid gap-2">
             <Label htmlFor="diagnosis">Diagnosis</Label>
 
@@ -350,7 +350,7 @@ toast.success("Prescription updated successfully");
                 Vitals (optional)
               </p>
 
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {(
                   [
                     "bp",
@@ -441,7 +441,7 @@ toast.success("Prescription updated successfully");
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {/* Medicine */}
                 <div className="grid gap-1">
                   <Label className="text-xs">Medicine Name</Label>

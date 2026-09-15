@@ -6,8 +6,10 @@ import { Column, ResourceListPage } from "@/components/resource-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { usePaginatedResource } from "@/hooks/use-pagination";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { MoreHorizontal, Plus, Send, CheckCircle2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -31,8 +33,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { removePrescriptionAction } from "./actions";
+import {
+  sendPrescriptionToReceptionAction,
+  markTaskDoneAction,
+} from "../tasks/actions";
 import { Prescription } from "@/app/types/prescription.types";
-
 
 type Patient = {
   id: string;
@@ -40,59 +45,36 @@ type Patient = {
   phone: string;
 };
 
-const columns: Column<Prescription>[] = [
-  {
-    header: "Patient",
-    cell: (p) => <span className="font-medium">{p.patient.fullName}</span>,
-  },
-  {
-    header: "Phone",
-    cell: (p) => p.patient.phone,
-  },
-  {
-    header: "Diagnosis",
-    cell: (p) => p.diagnosis,
-  },
-  {
-    header: "Disease",
-    cell: (p) => p.disease,
-  },
-  {
-    header: "Since",
-    cell: (p) => formatDate(p.since),
-  },
-  {
-    header: "Medicines",
-    cell: (p) =>
-      `${p.medications.length} medicine${
-        p.medications.length !== 1 ? "s" : ""
-      }`,
-  },
-  {
-    header: "Created",
-    cell: (p) => formatDate(p.createdAt),
-  },
-];
+// pendingTaskId is attached server-side by the /api/prescription route
+// (see TaskService.findByReferenceIds enrichment) -- add this field to
+// your shared Prescription type in app/types/prescription.types.ts too:
+//   pendingTaskId?: string;
 
 export default function PrescriptionsPage() {
   const router = useRouter();
+  const { user } = useCurrentUser();
 
-  const { data, loading, error, search, setSearch, page, setPage, pagination } =
-    usePaginatedResource<Prescription>("/api/prescription");
+  const {
+    data,
+    loading,
+    error,
+    search,
+    setSearch,
+    page,
+    setPage,
+    pagination,
+    refetch,
+  } = usePaginatedResource<Prescription>("/api/prescription");
 
   const [patientSearch, setPatientSearch] = useState("");
   const [open, setOpen] = useState(false);
 
   const { data: patients, loading: patientsLoading } =
-    usePaginatedResource<Patient>("/api/patients", {
-      limit: 10,
-    });
+    usePaginatedResource<Patient>("/api/patients", { limit: 10 });
 
   const filteredPatients = patients.filter((patient) => {
     const query = patientSearch.toLowerCase().trim();
-
     if (!query) return true;
-
     return (
       patient.fullName.toLowerCase().includes(query) ||
       patient.phone.includes(query)
@@ -102,9 +84,56 @@ export default function PrescriptionsPage() {
   function handleSelectPatient(patient: Patient, close: () => void) {
     close();
     setPatientSearch("");
-
     router.push(`/dashboard/prescriptions/new?patientId=${patient.id}`);
   }
+
+  async function handleSendToReception(prescriptionId: string) {
+    const result = await sendPrescriptionToReceptionAction(prescriptionId);
+    if (result?.error) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success(result.success ?? "Sent to reception");
+    refetch();
+  }
+
+  async function handleMarkDone(taskId: string) {
+    const result = await markTaskDoneAction(taskId);
+    if (result?.error) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success(result.success ?? "Marked as done");
+    refetch();
+  }
+
+  const columns: Column<Prescription>[] = [
+    {
+      header: "Patient",
+      cell: (p) => <span className="font-medium">{p.patient.fullName}</span>,
+    },
+    { header: "Phone", cell: (p) => p.patient.phone },
+    { header: "Diagnosis", cell: (p) => p.diagnosis },
+    { header: "Disease", cell: (p) => p.disease },
+    { header: "Since", cell: (p) => formatDate(p.since) },
+    {
+      header: "Medicines",
+      cell: (p) =>
+        `${p.medications.length} medicine${p.medications.length !== 1 ? "s" : ""}`,
+    },
+    {
+      header: "Handoff",
+      cell: (p) =>
+        p.pendingTaskId ? (
+          <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">
+            Pending
+          </Badge>
+        ) : (
+          <span className="text-xs text-muted-foreground">--</span>
+        ),
+    },
+    { header: "Created", cell: (p) => formatDate(p.createdAt) },
+  ];
 
   return (
     <ResourceListPage
@@ -141,43 +170,64 @@ export default function PrescriptionsPage() {
                 </Link>
               </DropdownMenuItem>
 
-              {/* Edit */}
-              <FormDialog
-                trigger={
-                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    Edit
-                  </DropdownMenuItem>
-                }
-                title="Edit Prescription"
-                description="Update the prescription information."
-              >
-                {(close) => (
-                  <EditPrescriptionForm
-                    prescription={prescription}
-                    onSuccess={() => {
-                      close();
-                      router.refresh();
-                    }}
-                  />
-                )}
-              </FormDialog>
-
-              {/* Delete */}
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem
-                  onSelect={(e) => e.preventDefault()}
-                  className="text-destructive focus:text-destructive"
+              {user?.role === "DOCTOR" && (
+                <FormDialog
+                  trigger={
+                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      Edit
+                    </DropdownMenuItem>
+                  }
+                  title="Edit Prescription"
+                  description="Update the prescription information."
                 >
-                  Delete
+                  {(close) => (
+                    <EditPrescriptionForm
+                      prescription={prescription}
+                      onSuccess={() => {
+                        close();
+                        router.refresh();
+                      }}
+                    />
+                  )}
+                </FormDialog>
+              )}
+
+              {/* Doctor: send to reception -- only shown if not already pending */}
+              {user?.role === "DOCTOR" && !prescription.pendingTaskId && (
+                <DropdownMenuItem
+                  onClick={() => handleSendToReception(prescription.id)}
+                >
+                  <Send className="mr-2 size-4" />
+                  Send to Reception
                 </DropdownMenuItem>
-              </AlertDialogTrigger>
+              )}
+
+              {/* Receptionist: mark the handoff done */}
+              {user?.role === "RECEPTIONIST" && prescription.pendingTaskId && (
+                <DropdownMenuItem
+                  onClick={() => handleMarkDone(prescription.pendingTaskId!)}
+                >
+                  <CheckCircle2 className="mr-2 size-4" />
+                  Mark as Done
+                </DropdownMenuItem>
+              )}
+
+              {user?.role === "DOCTOR" && (
+                <AlertDialogTrigger asChild>
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    className="text-destructive focus:text-destructive"
+                  >
+                    Delete
+                  </DropdownMenuItem>
+                </AlertDialogTrigger>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Delete prescription?</AlertDialogTitle>
-
               <AlertDialogDescription>
                 This will permanently delete the prescription for{" "}
                 <strong>{prescription.patient.fullName}</strong>. This action
@@ -187,21 +237,17 @@ export default function PrescriptionsPage() {
 
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-
               <AlertDialogAction
                 variant="destructive"
                 onClick={async (e) => {
                   e.preventDefault();
-
                   const result = await removePrescriptionAction(
                     prescription.id,
                   );
-
                   if (result?.error) {
                     toast.error(result.error);
                     return;
                   }
-
                   toast.success("Prescription deleted successfully");
                   setOpen(false);
                   router.refresh();
@@ -228,7 +274,6 @@ export default function PrescriptionsPage() {
             <div className="space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="patient-search">Search Patient</Label>
-
                 <Input
                   id="patient-search"
                   placeholder="Search by name or phone..."
@@ -256,7 +301,6 @@ export default function PrescriptionsPage() {
                     >
                       <div>
                         <p className="font-medium">{patient.fullName}</p>
-
                         <p className="text-sm text-muted-foreground">
                           {patient.phone}
                         </p>

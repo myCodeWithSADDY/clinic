@@ -1,9 +1,12 @@
-// app/dashboard/appointments/[id]/page.tsx
+
 import { notFound } from "next/navigation";
 import { AppointmentService } from "@/app/services/appointment.service";
 import { AppointmentStatusControl } from "@/components/appointment-status-control";
 import { PatientProfile } from "@/components/user-profile1";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Printer } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -37,12 +40,18 @@ export default async function AppointmentDetailPage({ params }: Props) {
   const isWalkIn = !appointment.patient;
 
   return (
-    <div className=" max-w-full space-y-6">
-      <div>
+    <div className="w-full min-w-0 max-w-full space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <h1 className="text-2xl font-semibold">Appointment Details</h1>
         <p className="text-sm text-muted-foreground">
           Booked on {formatDateTime(appointment.createdAt)}
         </p>
+        <Button asChild variant="outline" className="w-full sm:w-auto">
+          <Link href={`/dashboard/appointment/${appointment.id}/invoice`}>
+            <Printer className="mr-2 size-4" />
+            Print Invoice
+          </Link>
+        </Button>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
@@ -89,7 +98,7 @@ export default async function AppointmentDetailPage({ params }: Props) {
           <CardHeader>
             <CardTitle>Appointment</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4 text-sm">
+          <CardContent className="grid gap-4 text-sm sm:grid-cols-2">
             <div>
               <p className="text-muted-foreground">Date & Time</p>
               <p className="font-medium">
@@ -114,13 +123,13 @@ export default async function AppointmentDetailPage({ params }: Props) {
               />
             </div>
             {appointment.complaints && (
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <p className="text-muted-foreground">Complaints / Reason</p>
                 <p className="font-medium">{appointment.complaints}</p>
               </div>
             )}
             {appointment.notes && (
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <p className="text-muted-foreground">Notes</p>
                 <p className="font-medium">{appointment.notes}</p>
               </div>

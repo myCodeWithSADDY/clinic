@@ -29,7 +29,13 @@ export async function GET(req: NextRequest, { params }: Params) {
 
 export async function PATCH(req: NextRequest, { params }: Params) {
   try {
-    await requireAuth(req);
+    const payload = await requireAuth(req);
+    if (payload.role !== "DOCTOR") {
+      return NextResponse.json(
+        { success: false, error: "Only doctors can edit prescriptions." },
+        { status: 403 },
+      );
+    }
 
     const { id } = await params;
 
@@ -47,7 +53,13 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
 export async function DELETE(req: NextRequest, { params }: Params) {
   try {
-    await requireAuth(req);
+    const payload = await requireAuth(req);
+    if (payload.role !== "DOCTOR") {
+      return NextResponse.json(
+        { success: false, error: "Only doctors can delete prescriptions." },
+        { status: 403 },
+      );
+    }
 
     const { id } = await params;
 

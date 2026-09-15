@@ -11,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { formatDate } from "@/app/lib/format-date";
 
 type DatePickerFieldProps = {
   id: string;
@@ -67,7 +68,7 @@ export function DatePickerField({
       <input
         type="hidden"
         name={id}
-        value={value ? value.toISOString() : ""}
+        value={value ? formatDate(value) : "Pick a date"}
         required={required}
       />
     </Field>

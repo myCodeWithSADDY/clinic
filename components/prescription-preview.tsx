@@ -1,8 +1,5 @@
-// components/prescription-preview.tsx
-"use client";
 
-import { Divide } from "lucide-react";
-import { Separator } from "./ui/separator";
+"use client";
 
 type Medication = {
   medicine: string;
@@ -33,6 +30,7 @@ type PrescriptionPreviewProps = {
   };
   clinicalNotes: string;
   medications: Medication[];
+  fee?: string;
 };
 
 function formatDate(date: Date | undefined) {
@@ -58,6 +56,7 @@ export function PrescriptionPreview({
   vitals,
   clinicalNotes,
   medications,
+  fee,
 }: PrescriptionPreviewProps) {
   const vitalEntries = Object.entries(vitals).filter(([, v]) => v?.trim());
   const vitalLabels: Record<string, string> = {
@@ -71,7 +70,7 @@ export function PrescriptionPreview({
   };
 
   return (
-    <div className="rounded-lg border bg-white p-6 text-sm text-slate-900 shadow-sm">
+    <div className="mx-auto flex min-h-180 w-full max-w-200 flex-col rounded-lg border bg-white p-10 text-sm text-slate-900 shadow-sm print:min-h-screen print:w-full print:max-w-none print:rounded-none print:border-none print:p-8 print:shadow-none">
       {/* Letterhead */}
       <div className="border-b pb-3 text-center">
         <p className="text-lg font-bold">{clinicName}</p>
@@ -124,28 +123,27 @@ export function PrescriptionPreview({
       )}
 
       {/* Rx symbol + medications */}
-      <div className="mt-4">
+      <div className="mt-4 flex-1">
         <p className="mb-2 font-serif text-2xl italic">℞</p>
         {medications.length === 0 ? (
           <p className="text-xs text-slate-400">No medicines added yet</p>
         ) : (
           <ol className="space-y-2 pl-1">
             {medications.map((med, i) => (
-              <li key={i} className="text-sm p-5">
+              <li key={i} className="text-sm">
                 <div className="font-medium">
                   {i + 1}. {med.medicine || "--"}
-                  <span className="text-sm text-slate-500 pl-4">
-                    {med.medicineType &&
-                      ` (${med.medicineType.replaceAll("_", " ").toLowerCase()})`}
-                  </span>
                 </div>
-                <div className="pl-4 text-slate-500">{med.frequency}</div>
+                <div className="pl-4 text-slate-500">
+                  {med.frequency}
+                  {med.medicineType &&
+                    ` (${med.medicineType.replaceAll("_", " ")})`}
+                </div>
                 {med.insideMedicine && (
                   <span className="block pl-4 text-xs text-slate-500">
                     {med.insideMedicine}
                   </span>
                 )}
-                
               </li>
             ))}
           </ol>
@@ -161,8 +159,13 @@ export function PrescriptionPreview({
       )}
 
       {/* Footer */}
-      <div className="mt-8 flex justify-end">
-        <div className="text-center text-xs text-slate-500">
+      <div className="mt-8 flex items-end justify-between">
+        {fee && fee.trim() && (
+          <p className="text-sm font-medium">
+            Fee: Rs. {Number(fee).toLocaleString("en-PK")}
+          </p>
+        )}
+        <div className="ml-auto text-center text-xs text-slate-500">
           <div className="mb-1 w-32 border-t border-slate-400" />
           Signature
         </div>

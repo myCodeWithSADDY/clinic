@@ -18,7 +18,7 @@ const appointmentFields = {
 
   complaints: z.string().optional().nullable(),
   notes: z.string().optional().nullable(),
-
+  fee: z.coerce.number().min(0).optional().nullable(),
   recurring: z.coerce.date().optional().nullable(),
 
   status: z.enum([

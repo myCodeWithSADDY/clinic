@@ -106,12 +106,15 @@ model User {
   id            String         @id @default(cuid())
   fullName      String
   phone         String?        @unique
-  email         String        @unique
+  email         String         @unique
   role          Role
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   password      String
   prescriptions Prescription[]
+
+  createdTasks   Task[] @relation("CreatedTasks")
+  completedTasks Task[] @relation("CompletedTasks")
 }
 
 model Prescription {
@@ -120,9 +123,9 @@ model Prescription {
   patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
   patientId String
 
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  fee       Decimal? @db.Decimal(10, 2)
   diagnosis String
   disease   String
   symptoms  String
@@ -162,9 +165,9 @@ model Medication {
 model Appointment {
   id String @id @default(cuid())
 
-  patient   Patient? @relation(fields: [patientId], references: [id])
-  patientId String?
-
+  patient      Patient? @relation(fields: [patientId], references: [id])
+  patientId    String?
+  fee          Decimal? @db.Decimal(10, 2)
   walkInPhone  String?
   walkInName   String?
   walkInGender Gender?
@@ -186,4 +189,39 @@ model Appointment {
 
   @@index([date, startTime])
   @@index([patientId, date])
+}
+
+enum TaskType {
+  PRESCRIPTION
+  APPOINTMENT
+}
+
+enum TaskStatus {
+  PENDING
+  DONE
+}
+
+model Task {
+  id            String      @id @default(cuid())
+
+  type          TaskType
+  referenceId   String
+
+  assignedRole  Role
+  status        TaskStatus  @default(PENDING)
+
+  notes         String?
+
+  createdById   String
+  createdBy     User        @relation("CreatedTasks", fields: [createdById], references: [id])
+
+  completedById String?
+  completedBy   User?       @relation("CompletedTasks", fields: [completedById], references: [id])
+  completedAt   DateTime?
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([assignedRole, status])
+  @@index([type, referenceId])
 }

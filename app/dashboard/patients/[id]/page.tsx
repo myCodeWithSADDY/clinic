@@ -31,7 +31,7 @@ export default async function PatientPage({ params }: Props) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="w-full min-w-0 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Patient Profile</h1>
         <p className="text-sm text-muted-foreground">

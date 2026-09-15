@@ -1,6 +1,7 @@
 // app/services/prescription.service.ts
 import { prisma } from "@/app/lib/prisma";
 import { CreatePrescriptionInput, UpdatePrescriptionInput } from "@/app/validations/prescription.schema";
+import { getOrSetCache, invalidateCache } from "../lib/cache";
 
 export class PrescriptionService {
   static async create(data: CreatePrescriptionInput, userId: string) {
@@ -11,7 +12,7 @@ export class PrescriptionService {
       throw new Error("PATIENT_NOT_FOUND");
     }
 
-    return prisma.prescription.create({
+  const created =  await prisma.prescription.create({
       data: {
         patientId: data.patientId,
         userId,
@@ -26,6 +27,7 @@ export class PrescriptionService {
         sugar: data.sugar,
         spo2: data.spo2,
         rr: data.rr,
+        fee: data.fee,
         clinicalNotes: data.clinicalNotes,
         medications: {
           create: data.medications.map((m) => ({
@@ -38,6 +40,9 @@ export class PrescriptionService {
       },
       include: { medications: true, patient: true },
     });
+    await invalidateCache("dashboard:summary");
+    await invalidateCache("dashboard:revenue:*");
+    return created;
   }
 
   static async findAll(params: {
@@ -97,17 +102,27 @@ export class PrescriptionService {
   }
 
   static async findOne(id: string) {
-    const prescription = await prisma.prescription.findUnique({
-      where: { id },
-      include: {
-        medications: true,
-        patient: { select: { id: true, fullName: true, phone: true } },
-      },
+    return getOrSetCache(`prescription:${id}`, 300, async () => {
+      const prescription = await prisma.prescription.findUnique({
+        where: { id },
+        include: {
+          medications: true,
+          patient: {
+            select: {
+              id: true,
+              fullName: true,
+              phone: true,
+            },
+          },
+        },
+      });
+
+      if (!prescription) {
+        throw new Error("PRESCRIPTION_NOT_FOUND");
+      }
+
+      return prescription;
     });
-    if (!prescription) {
-      throw new Error("PRESCRIPTION_NOT_FOUND");
-    }
-    return prescription;
   }
 
   static async update(id: string, data: UpdatePrescriptionInput) {
@@ -121,7 +136,7 @@ export class PrescriptionService {
 
     const { medications, ...prescriptionData } = data;
 
-    return prisma.prescription.update({
+  const updated =  await prisma.prescription.update({
       where: { id },
       data: {
         ...prescriptionData,
@@ -143,6 +158,9 @@ export class PrescriptionService {
         medications: true,
       },
     });
+    await invalidateCache(`prescription:${id}`);
+    await invalidateCache("dashboard:revenue:*");
+    return updated;
   }
   static async remove(id: string) {
     const prescription = await prisma.prescription.findUnique({
@@ -153,10 +171,14 @@ export class PrescriptionService {
     if (!prescription) {
       throw new Error("PRESCRIPTION_NOT_FOUND");
     }
-    return prisma.prescription.delete({
+   const deleted = await prisma.prescription.delete({
       where: {
         id,
       },
     });
+    await invalidateCache(`prescription:${id}`);
+    await invalidateCache("dashboard:revenue:*");
+    await invalidateCache("dashboard:summary");
+    return deleted;
   }
 }

@@ -4,19 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Pencil } from "lucide-react";
 import { PrescriptionService } from "@/app/services/prescription.service";
-import { FormDialog } from "@/components/form-dialog";
-import EditPrescriptionForm from "@/components/edit/edit-prescription-form";
 
+import EditPrescriptionDialog from "@/components/edit/edit-prescription-dialog";
+import { ArrowLeft } from "lucide-react";
 
 type PageProps = {
   params: Promise<{
     id: string;
   }>;
 };
-
-
 
 function Vital({ label, value }: { label: string; value: string | null }) {
   return (
@@ -29,35 +26,33 @@ function Vital({ label, value }: { label: string; value: string | null }) {
 
 export default async function PrescriptionViewPage({ params }: PageProps) {
   const { id } = await params;
-   const prescription = await (async () => {
-     try {
-       return await PrescriptionService.findOne(id);
-     } catch (error) {
-       if (
-         error instanceof Error &&
-         error.message === "PRESCRIPTION_NOT_FOUND"
-       ) {
-         notFound();
-       }
+  const prescription = await (async () => {
+    try {
+      return await PrescriptionService.findOne(id);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "PRESCRIPTION_NOT_FOUND"
+      ) {
+        notFound();
+      }
 
-       throw error;
-     }
-   })();
-
- 
+      throw error;
+    }
+  })();
 
   return (
-    <div className=" w-full max-w-full space-y-6 p-6">
+    <div className="w-full min-w-0 max-w-full space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-w-0 items-center gap-3">
           <Button variant="outline" size="icon" asChild>
             <Link href="/dashboard/prescriptions">
               <ArrowLeft className="size-4" />
             </Link>
           </Button>
 
-          <div>
+          <div className="min-w-0">
             <h1 className="text-2xl font-semibold">Prescription</h1>
 
             <p className="text-sm text-muted-foreground">
@@ -66,36 +61,18 @@ export default async function PrescriptionViewPage({ params }: PageProps) {
           </div>
         </div>
 
-        <FormDialog
-          trigger={
-            <Button>
-              <Pencil className="mr-2 size-4" />
-              Edit
-            </Button>
-          }
-          title="Edit Prescription"
-          description="Update prescription information."
-        >
-          {(close) => (
-            <EditPrescriptionForm
-              prescription={{
-                ...prescription,
-
-                since: prescription.since.toISOString(),
-                createdAt: prescription.createdAt.toISOString(),
-                updatedAt: prescription.updatedAt.toISOString(),
-
-                medications: prescription.medications.map((medication) => ({
-                  ...medication,
-                  createdAt: medication.createdAt.toISOString(),
-                })),
-              }}
-              onSuccess={() => {
-                close();
-              }}
-            />
-          )}
-        </FormDialog>
+        <EditPrescriptionDialog
+          prescription={{
+            ...prescription,
+            since: prescription.since.toISOString(),
+            createdAt: prescription.createdAt.toISOString(),
+            updatedAt: prescription.updatedAt.toISOString(),
+            medications: prescription.medications.map((medication) => ({
+              ...medication,
+              createdAt: medication.createdAt.toISOString(),
+            })),
+          }}
+        />
       </div>
 
       {/* Patient */}

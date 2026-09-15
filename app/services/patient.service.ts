@@ -1,11 +1,11 @@
 // services/patient.service.ts
 
-
 import { prisma } from "@/app/lib/prisma";
 import {
   CreatePatientInput,
   UpdatePatientInput,
 } from "@/app/validations/patient.schema";
+import { getOrSetCache, invalidateCache } from "@/app/lib/cache";
 
 export class PatientService {
   static async create(data: CreatePatientInput) {
@@ -16,7 +16,12 @@ export class PatientService {
       throw new Error("PHONE_ALREADY_EXISTS");
     }
 
-    return prisma.patient.create({ data });
+    const patient = await prisma.patient.create({ data });
+
+
+    await invalidateCache("dashboard:summary");
+
+    return patient;
   }
 
   static async findAll(params: {
@@ -64,14 +69,17 @@ export class PatientService {
     };
   }
 
+
   static async findOne(id: string) {
-    const patient = await prisma.patient.findUnique({
-      where: { id },
+    return getOrSetCache(`patient:${id}`, 300, async () => {
+      const patient = await prisma.patient.findUnique({
+        where: { id },
+      });
+      if (!patient) {
+        throw new Error("PATIENT_NOT_FOUND");
+      }
+      return patient;
     });
-    if (!patient) {
-      throw new Error("PATIENT_NOT_FOUND");
-    }
-    return patient;
   }
 
   static async update(id: string, data: UpdatePatientInput) {
@@ -86,26 +94,31 @@ export class PatientService {
       }
     }
 
-    return prisma.patient.update({
+    const updated = await prisma.patient.update({
       where: { id },
       data,
     });
+
+    await invalidateCache(`patient:${id}`); // stale cached record must go
+    return updated;
   }
 
   static async remove(id: string) {
     try {
-      await this.findOne(id)
+      await this.findOne(id);
       await prisma.patient.delete({
         where: {
-          id
-        }
-      })
-      return {success: true}
+          id,
+        },
+      });
+      await invalidateCache(`patient:${id}`);
+      await invalidateCache("dashboard:summary");
+      return { success: true };
     } catch (error) {
       console.log(error);
-       return {
-         error: "Unable to remove patient",
-       };
+      return {
+        error: "Unable to remove patient",
+      };
     }
   }
 }

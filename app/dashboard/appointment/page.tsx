@@ -122,8 +122,8 @@ export default function AppointmentsPage() {
       emptyTitle="No appointments found"
       emptyDescription="No appointments have been booked yet."
       addAction={
-        <div className="flex gap-2">
-          <Button asChild variant="outline">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Button asChild variant="outline" className="w-full sm:w-auto">
             <Link href="/dashboard/appointment/new">
               <UserPlus className="mr-2 size-4" />
               Book Walk-in
@@ -132,7 +132,7 @@ export default function AppointmentsPage() {
 
           <FormDialog
             trigger={
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="mr-2 size-4" />
                 Book for Patient
               </Button>
@@ -170,7 +170,9 @@ export default function AppointmentsPage() {
                       >
                         <div>
                           <p className="font-medium">{p.fullName}</p>
-                          <p className="text-sm text-muted-foreground">{p.phone}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {p.phone}
+                          </p>
                         </div>
                       </button>
                     ))
@@ -191,7 +193,14 @@ export default function AppointmentsPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem asChild>
-              <Link href={`/dashboard/appointment/${appointment.id}`}>View</Link>
+              <Link href={`/dashboard/appointment/${appointment.id}`}>
+                View
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/dashboard/appointment/${appointment.id}/invoice`}>
+                Print invoice
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

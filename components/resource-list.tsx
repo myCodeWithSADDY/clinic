@@ -1,3 +1,4 @@
+// components/resource-list-page.tsx
 "use client";
 
 import Link from "next/link";
@@ -40,7 +41,8 @@ type ResourceListPageProps<T> = {
   pagination: { total: number; totalPages: number };
   emptyTitle?: string;
   emptyDescription?: string;
-
+  // Optional per-row actions (e.g. a dropdown menu cell), rendered
+  // as the last column if provided
   renderActions?: (row: T) => React.ReactNode;
 };
 
@@ -118,7 +120,7 @@ export function ResourceListPage<T>({
             </div>
           ) : (
             <>
-              <div className="rounded-md border">
+              <div className="overflow-x-auto rounded-md border">
                 <Table>
                   <TableHeader>
                     <TableRow>

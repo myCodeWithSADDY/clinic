@@ -18,7 +18,16 @@ export async function requireAuth(req?: NextRequest): Promise<JWTPayload> {
   try {
     const payload = await verifyToken(token);
 
-    return payload as JWTPayload;
+    if (!payload.sub || typeof payload.email !== "string") {
+      throw new Error("UNAUTHORIZED");
+    }
+
+    return {
+      userId: payload.sub,
+      sub: payload.sub,
+      email: payload.email,
+      role: payload.role,
+    } as JWTPayload;
   } catch {
     throw new Error("UNAUTHORIZED");
   }
