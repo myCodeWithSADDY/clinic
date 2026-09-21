@@ -1,6 +1,6 @@
 "use client"
 
-import { MapPin, Scale, CreditCard, Calendar } from "lucide-react";
+import { MapPin, Scale, CreditCard, Calendar, User } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -64,7 +64,7 @@ const PatientProfile = ({ patient, className }: PatientProfileProps) => {
             <h3 className="text-xl font-semibold">{patient.fullName}</h3>
 
             <Badge variant="secondary" className="text-xs">
-              {patient.gender ?? "—"}
+              {patient.medicalRecordId || "—"}
             </Badge>
 
             <p className="text-sm text-muted-foreground">{patient.phone}</p>
@@ -75,6 +75,16 @@ const PatientProfile = ({ patient, className }: PatientProfileProps) => {
       <CardContent className="space-y-4 pt-6">
         <div className="space-y-3 text-sm">
           {/* CNIC */}
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <User className="size-4" />
+              <span>Gender</span>
+            </div>
+
+            <span className="font-medium">
+              {patient.gender || "—"}
+            </span>
+          </div>
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Calendar className="size-4" />

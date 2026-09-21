@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { usePaginatedResource } from "@/hooks/use-pagination";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { MoreHorizontal, Plus, Send, CheckCircle2 } from "lucide-react";
+import { MoreHorizontal, Plus, Send, CheckCircle2, View, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -166,6 +166,7 @@ export default function PrescriptionsPage() {
               {/* View */}
               <DropdownMenuItem asChild>
                 <Link href={`/dashboard/prescriptions/${prescription.id}`}>
+                  <View className="mr-2 size-4" />
                   View
                 </Link>
               </DropdownMenuItem>
@@ -174,6 +175,7 @@ export default function PrescriptionsPage() {
                 <FormDialog
                   trigger={
                     <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                      <Pencil className="mr-2 size-4" />
                       Edit
                     </DropdownMenuItem>
                   }
@@ -218,6 +220,7 @@ export default function PrescriptionsPage() {
                     onSelect={(e) => e.preventDefault()}
                     className="text-destructive focus:text-destructive"
                   >
+                    <Trash className="mr-2 size-4" />
                     Delete
                   </DropdownMenuItem>
                 </AlertDialogTrigger>

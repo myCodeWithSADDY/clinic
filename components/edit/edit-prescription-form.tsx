@@ -46,6 +46,8 @@ import { DatePickerField } from "@/components/date-picker";
 import { MEDICINE_TYPE_LABELS, MEDICINE_TYPES } from "@/app/types/medsTypes";
 import { toast } from "sonner";
 import { Prescription } from "@/app/types/prescription.types";
+import { Checkbox } from "../ui/checkbox";
+import { chronicDiseaseOptions } from "@/app/lib/chronicDiseaseOptions";
 
 const MEDICINE_TYPE_ICONS: Record<
   (typeof MEDICINE_TYPES)[number],
@@ -132,6 +134,11 @@ export default function EditPrescriptionForm({
     diagnosis: prescription.diagnosis ?? "",
     disease: prescription.disease ?? "",
     symptoms: prescription.symptoms ?? "",
+
+    allergy: prescription.allergy ?? "",
+    previousReport: prescription.PreviousReport ?? "",
+    chronicDiseases: prescription.ChronicDisease ?? [],
+
     bp: prescription.bp ?? "",
     pulse: prescription.pulse ?? "",
     tempF: prescription.tempF ?? "",
@@ -139,6 +146,7 @@ export default function EditPrescriptionForm({
     sugar: prescription.sugar ?? "",
     spo2: prescription.spo2 ?? "",
     rr: prescription.rr ?? "",
+
     clinicalNotes: prescription.clinicalNotes ?? "",
   });
 
@@ -148,12 +156,12 @@ export default function EditPrescriptionForm({
       : [createMedicationRow()],
   );
 
-  function updateField(name: keyof typeof fields, value: string) {
-    setFields((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
+ function updateField(name: keyof typeof fields, value: string | string[]) {
+   setFields((prev) => ({
+     ...prev,
+     [name]: value,
+   }));
+ }
 
   function updateRow(key: string, field: keyof MedicationRow, value: string) {
     setMedications((rows) =>
@@ -167,7 +175,17 @@ export default function EditPrescriptionForm({
       ),
     );
   }
+type ChronicDisease =
+  NonNullable<UpdatePrescriptionInput["chronicDiseases"]>[number];
 
+function toggleChronicDisease(value: ChronicDisease) {
+  setFields((prev) => ({
+    ...prev,
+    chronicDiseases: prev.chronicDiseases.includes(value)
+      ? prev.chronicDiseases.filter((item) => item !== value)
+      : [...prev.chronicDiseases, value],
+  }));
+}
   function addRow() {
     setMedications((rows) => [...rows, createMedicationRow()]);
   }
@@ -199,6 +217,10 @@ export default function EditPrescriptionForm({
       disease: fields.disease,
       symptoms: fields.symptoms,
       since,
+      allergy: fields.allergy || undefined,
+      previousReport: fields.previousReport || undefined,
+      chronicDiseases: (prescription.ChronicDisease ??
+        []) as UpdatePrescriptionInput["chronicDiseases"],
 
       bp: fields.bp || undefined,
       pulse: fields.pulse || undefined,
@@ -381,6 +403,75 @@ toast.success("Prescription updated successfully");
                 ))}
               </div>
             </div>
+
+            <Separator />
+
+            {/* Medical History */}
+            <section className="flex flex-col gap-4">
+              <h2 className="text-sm font-semibold text-foreground">
+                Medical History
+              </h2>
+
+              {/* Allergy */}
+              <div className="grid gap-2">
+                <Label htmlFor="allergy">Allergy</Label>
+
+                <Input
+                  id="allergy"
+                  value={fields.allergy}
+                  onChange={(e) => updateField("allergy", e.target.value)}
+                  placeholder="e.g. Penicillin, Dust, None"
+                  disabled={loading}
+                />
+              </div>
+
+              {/* Chronic Diseases */}
+              <div className="grid gap-2">
+                <div>
+                  <Label>Chronic Diseases</Label>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Select all that apply
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-2 rounded-lg border p-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {chronicDiseaseOptions.map((disease) => (
+                    <label
+                      key={disease.value}
+                      htmlFor={`edit-chronic-${disease.value}`}
+                      className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted/60"
+                    >
+                      <Checkbox
+                        id={`edit-chronic-${disease.value}`}
+                        checked={fields.chronicDiseases.includes(disease.value)}
+                        onCheckedChange={() =>
+                          toggleChronicDisease(disease.value)
+                        }
+                        disabled={loading}
+                      />
+
+                      <span>{disease.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Previous Report */}
+              <div className="grid gap-2">
+                <Label htmlFor="previousReport">Previous Report</Label>
+
+                <Textarea
+                  id="previousReport"
+                  value={fields.previousReport}
+                  onChange={(e) =>
+                    updateField("previousReport", e.target.value)
+                  }
+                  placeholder="Enter previous medical report findings..."
+                  disabled={loading}
+                  rows={3}
+                />
+              </div>
+            </section>
 
             <Separator />
 

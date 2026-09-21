@@ -43,11 +43,12 @@ import {
 import { DatePickerField } from "@/components/date-picker";
 import { PrescriptionPreview } from "@/components/prescription-preview";
 import type { PrescriptionState } from "@/app/dashboard/prescriptions/actions";
-
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { MEDICINE_TYPE_LABELS, MEDICINE_TYPES } from "@/app/types/medsTypes";
+import { chronicDiseaseOptions } from "@/app/lib/chronicDiseaseOptions";
 
 const MEDICINE_TYPE_ICONS: Record<
   (typeof MEDICINE_TYPES)[number],
@@ -151,6 +152,9 @@ export default function PrescriptionForm({
     diagnosis: "",
     disease: "",
     symptoms: "",
+    allergy: "",
+    chronicDiseases: [] as string[],
+    previousReport: "",
     bp: "",
     pulse: "",
     tempF: "",
@@ -186,6 +190,14 @@ export default function PrescriptionForm({
       [name]: value,
     }));
   }
+function toggleChronicDisease(value: string) {
+  setFields((prev) => ({
+    ...prev,
+    chronicDiseases: prev.chronicDiseases.includes(value)
+      ? prev.chronicDiseases.filter((item) => item !== value)
+      : [...prev.chronicDiseases, value],
+  }));
+}
 
   function updateRow(key: string, field: keyof MedicationRow, value: string) {
     setMedications((rows) =>
@@ -210,17 +222,17 @@ export default function PrescriptionForm({
     );
   }
 
-  function handleSubmit(formData: FormData) {
-    const payload = medications.map(({ ...rest }) => rest);
+ function handleSubmit(formData: FormData) {
+   const payload = medications.map(({ ...rest }) => rest);
 
-    formData.set("medications", JSON.stringify(payload));
-
-    formData.set("since", since ? since.toISOString() : "");
-
-    formData.set("fee", fields.fee);
-
-    formAction(formData);
-  }
+   formData.set("medications", JSON.stringify(payload));
+   formData.set("since", since ? since.toISOString() : "");
+   formData.set("fee", fields.fee);
+   formData.set("allergy", fields.allergy);
+   formData.set("chronicDiseases", JSON.stringify(fields.chronicDiseases));
+formData.set("previousReport", fields.previousReport);
+   formAction(formData);
+ }
 
   function handlePrint() {
     window.print();
@@ -264,8 +276,6 @@ export default function PrescriptionForm({
 
           {/* DIAGNOSIS */}
           <section className="flex flex-col gap-4">
-            <h2 className="text-sm font-semibold text-foreground">Diagnosis</h2>
-
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label htmlFor="diagnosis">Diagnosis</Label>
@@ -321,6 +331,72 @@ export default function PrescriptionForm({
 
           <Separator />
 
+          <section className="flex flex-col gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="allergy">Allergy</Label>
+
+              <Input
+                id="allergy"
+                name="allergy"
+                placeholder="e.g. Penicillin, Dust, None"
+                disabled={isPending}
+                value={fields.allergy}
+                onChange={(e) => updateField("allergy", e.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <div>
+                <Label>Chronic Diseases</Label>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Select all that apply
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 rounded-lg border p-4 sm:grid-cols-2 lg:grid-cols-3">
+                {chronicDiseaseOptions.map((disease) => (
+                  <label
+                    key={disease.value}
+                    htmlFor={`chronic-${disease.value}`}
+                    className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted/60"
+                  >
+                    <Checkbox
+                      id={`chronic-${disease.value}`}
+                      checked={fields.chronicDiseases.includes(disease.value)}
+                      onCheckedChange={() =>
+                        toggleChronicDisease(disease.value)
+                      }
+                      disabled={isPending}
+                    />
+
+                    <span>{disease.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              <input
+                type="hidden"
+                name="chronicDiseases"
+                value={JSON.stringify(fields.chronicDiseases)}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="previousReport">Previous Report</Label>
+
+              <Textarea
+                id="previousReport"
+                name="previousReport"
+                placeholder="Enter previous medical report findings..."
+                disabled={isPending}
+                rows={3}
+                value={fields.previousReport}
+                onChange={(e) => updateField("previousReport", e.target.value)}
+              />
+            </div>
+          </section>
+
+          <Separator />
           {/* VITALS */}
           <section>
             <Collapsible open={detailsOpen} onOpenChange={setDetailsOpen}>
@@ -404,7 +480,9 @@ export default function PrescriptionForm({
                 <Separator />
 
                 <div className="grid gap-2">
-                  <Label htmlFor="clinicalNotes">Clinical Notes (optional)</Label>
+                  <Label htmlFor="clinicalNotes">
+                    Clinical Notes (optional)
+                  </Label>
 
                   <Textarea
                     id="clinicalNotes"

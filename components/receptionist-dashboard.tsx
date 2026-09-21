@@ -50,73 +50,86 @@ export async function ReceptionistDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-semibold">Reception Desk</h1>
-        <p className="text-sm text-muted-foreground">
-          Today&apos;s schedule and pending handoffs
-        </p>
+      <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-r from-slate-950 via-cyan-950 to-sky-800 p-6 text-white shadow-[0_20px_50px_rgba(14,116,144,0.18)]">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cyan-100">
+              Reception desk
+            </span>
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
+              Today&apos;s Operations
+            </h1>
+            <p className="mt-2 text-sm text-slate-200">
+              Schedule, patient flow, and pending handoffs in one place.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            <Button asChild className="border-0 bg-white text-slate-900 hover:bg-slate-100">
+              <Link href="/dashboard/appointments/new">
+                <Plus className="mr-2 size-4" />
+                Book Walk-in
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+              <Link href="/dashboard/patients">
+                <Users className="mr-2 size-4" />
+                Manage Patients
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
+        <Card className="border-0 bg-gradient-to-br from-white to-amber-50 shadow-[0_12px_30px_rgba(245,158,11,0.08)]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-slate-500">
               Pending Handoffs
             </CardTitle>
-            <ClipboardList className="size-4 text-muted-foreground" />
+            <div className="flex size-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+              <ClipboardList className="size-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingTasks.length}</div>
+            <div className="text-3xl font-bold tracking-tight text-slate-900">{pendingTasks.length}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 bg-gradient-to-br from-white to-cyan-50 shadow-[0_12px_30px_rgba(6,182,212,0.08)]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-slate-500">
               Today&apos;s Appointments
             </CardTitle>
-            <CalendarDays className="size-4 text-muted-foreground" />
+            <div className="flex size-10 items-center justify-center rounded-xl bg-cyan-100 text-cyan-700">
+              <CalendarDays className="size-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-3xl font-bold tracking-tight text-slate-900">
               {todaysAppointments.length}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-0 bg-gradient-to-br from-white to-emerald-50 shadow-[0_12px_30px_rgba(16,185,129,0.08)]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-sm font-medium text-slate-500">
               Total Patients
             </CardTitle>
-            <Users className="size-4 text-muted-foreground" />
+            <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
+              <Users className="size-4" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalPatients}</div>
+            <div className="text-3xl font-bold tracking-tight text-slate-900">{totalPatients}</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick actions */}
-      <div className="flex gap-2">
-        <Button asChild>
-          <Link href="/dashboard/appointments/new">
-            <Plus className="mr-2 size-4" />
-            Book Walk-in
-          </Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/dashboard/patients">
-            <Users className="mr-2 size-4" />
-            Manage Patients
-          </Link>
-        </Button>
-      </div>
-
-      {/* Pending handoffs -- the main thing a receptionist needs to act on */}
-      <Card>
+      <Card className="border-0 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
         <CardHeader>
-          <CardTitle>Pending Prescription Handoffs</CardTitle>
+          <CardTitle className="text-xl">Pending Prescription Handoffs</CardTitle>
         </CardHeader>
         <CardContent>
           {pendingTasks.length === 0 ? (
@@ -130,13 +143,13 @@ export async function ReceptionistDashboard() {
                 return (
                   <div
                     key={task.id}
-                    className="flex items-center justify-between rounded-md border p-3"
+                    className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-3 shadow-sm"
                   >
                     <div>
-                      <p className="text-sm font-medium">
+                      <p className="text-sm font-semibold text-slate-900">
                         {prescription?.patient.fullName ?? "Unknown patient"}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-slate-500">
                         {prescription?.diagnosis ?? "--"} · sent by{" "}
                         {task.createdBy.fullName}
                       </p>
@@ -155,10 +168,9 @@ export async function ReceptionistDashboard() {
         </CardContent>
       </Card>
 
-      {/* Today's schedule */}
-      <Card>
+      <Card className="border-0 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
         <CardHeader>
-          <CardTitle>Today&apos;s Appointments</CardTitle>
+          <CardTitle className="text-xl">Today&apos;s Appointments</CardTitle>
         </CardHeader>
         <CardContent>
           {todaysAppointments.length === 0 ? (
@@ -170,18 +182,18 @@ export async function ReceptionistDashboard() {
               {todaysAppointments.map((appt) => (
                 <div
                   key={appt.id}
-                  className="flex items-center justify-between rounded-md border p-3 text-sm"
+                  className="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 p-3 text-sm shadow-sm"
                 >
                   <div>
-                    <p className="font-medium">
+                    <p className="font-semibold text-slate-900">
                       {appt.patient?.fullName ?? appt.walkInName ?? "--"}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-slate-500">
                       {appt.service} ·{" "}
                       {appt.appointmentType.replaceAll("_", " ")}
                     </p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="rounded-full bg-cyan-100 px-2.5 py-1 text-xs font-medium text-cyan-700">
                     {new Date(appt.startTime).toLocaleTimeString("en-PK", {
                       hour: "numeric",
                       minute: "2-digit",

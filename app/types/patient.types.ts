@@ -2,6 +2,7 @@ export type Patient = {
   id: string;
   fullName: string;
   phone: string;
+  medicalRecordId: string
   dateOfBirth: string;
   gender: "MALE" | "FEMALE" | null;
   cnic: string | null;

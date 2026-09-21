@@ -27,6 +27,15 @@ export async function createPrescriptionAction(
   } catch {
     return { error: "Invalid medication data." };
   }
+  const chronicDiseasesRaw = formData.get("chronicDiseases");
+
+  let chronicDiseases: unknown = [];
+
+  try {
+    chronicDiseases = JSON.parse(String(chronicDiseasesRaw ?? "[]"));
+  } catch {
+    chronicDiseases = null;
+  }
 
   const raw = {
     patientId: formData.get("patientId"),
@@ -34,6 +43,9 @@ export async function createPrescriptionAction(
     disease: formData.get("disease"),
     symptoms: formData.get("symptoms"),
     since: formData.get("since"),
+    allergy: formData.get("allergy")?.toString() ?? "",
+    PreviousReport: formData.get("previousReport,")?.toString() ?? "",
+    chronicDiseases,
     bp: formData.get("bp") || undefined,
     pulse: formData.get("pulse") || undefined,
     tempF: formData.get("tempF") || undefined,
@@ -45,7 +57,6 @@ export async function createPrescriptionAction(
     medications,
     fee: formData.get("fee") || undefined,
   };
-
   const validation = createPrescriptionSchema.safeParse(raw);
   if (!validation.success) {
     const firstError = validation.error.issues[0];

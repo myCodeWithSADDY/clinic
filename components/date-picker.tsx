@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { formatDate } from "@/app/lib/format-date";
+import { format } from "date-fns";
 
 type DatePickerFieldProps = {
   id: string;
@@ -47,7 +48,7 @@ export function DatePickerField({
             disabled={disabled}
             className="w-full justify-start font-normal"
           >
-            {value ? value.toLocaleDateString() : "Select date of birth"}
+            {value ? format(value, "MM/dd/yyyy") : "Select date of birth"}
           </Button>
         </PopoverTrigger>
 

@@ -33,7 +33,7 @@ type ResourceListPageProps<T> = {
   data: T[];
   getRowKey: (row: T) => string;
   loading: boolean;
-  error: string;
+  error?: string;
   search: string;
   onSearchChange: (value: string) => void;
   page: number;

@@ -81,12 +81,6 @@ function NewPrescriptionPageContent() {
     return (
       <div className="w-full">
         <div className="mb-6">
-          <Button variant="outline" asChild className="mb-4">
-            <Link href="/dashboard/prescriptions">
-              <ArrowLeft className="mr-2 size-4" />
-              Back to Prescriptions
-            </Link>
-          </Button>
 
           <h1 className="text-2xl font-semibold">
             New Prescription

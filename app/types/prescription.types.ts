@@ -26,8 +26,10 @@ export type Prescription = {
   sugar: string | null;
   spo2: string | null;
   rr: string | null;
-
-  clinicalNotes: string;
+  allergy: string | null;
+  PreviousReport: string | null;
+  ChronicDisease: string[];
+  clinicalNotes: string | null;
 
   createdAt: string;
   updatedAt: string;

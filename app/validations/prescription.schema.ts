@@ -1,4 +1,5 @@
 // app/validations/prescription.schema.ts
+import { ChronicDisease } from "@prisma/client";
 import { z } from "zod";
 
 export const medicineTypeEnum = z.enum([
@@ -41,6 +42,12 @@ export const medicineTypeEnum = z.enum([
   "PR",
 ]);
 
+const chronicDiseaseEnum = z.enum(
+  Object.values(ChronicDisease) as [ChronicDisease, ...ChronicDisease[]],
+);
+
+
+
 export const medicationSchema = z.object({
   medicine: z.string().min(1, "Medicine name is required"),
   medicineType: medicineTypeEnum,
@@ -63,7 +70,22 @@ export const createPrescriptionSchema = z.object({
   sugar: z.string().optional(),
   spo2: z.string().optional(),
   rr: z.string().optional(),
+  allergy: z
+    .string()
+    .trim()
+    .max(500, "Allergy information is too long")
+    .optional(),
 
+  previousReport: z
+    .string()
+    .trim()
+    .max(5000, "Previous report is too long")
+    .optional(),
+
+  chronicDiseases: z
+    .array(chronicDiseaseEnum)
+    .max(20, "Too many chronic diseases selected")
+    .default([]),
   clinicalNotes: z.string().optional().default(""),
   fee: z.coerce.number().min(0).optional().nullable(),
   medications: z.array(medicationSchema).min(1, "Add at least one medicine"),

@@ -1,7 +1,9 @@
-// app/dashboard/patients/[id]/page.tsx
 import { notFound } from "next/navigation";
+
 import { PatientService } from "@/app/services/patient.service";
+
 import { PatientProfile } from "@/components/user-profile1";
+
 import { PatientPrescriptions } from "@/components/patient-prescription";
 
 type Props = {
@@ -14,19 +16,20 @@ export default async function PatientPage({ params }: Props) {
   const { id } = await params;
 
   let patient;
+
   try {
-    patient = await PatientService.findOne(id);
+    patient = await PatientService.findWithHistory(id);
   } catch (error) {
     if (error instanceof Error && error.message === "PATIENT_NOT_FOUND") {
       notFound();
     }
+
     throw error;
   }
 
   const patientProfile = {
     ...patient,
-    address:
-      [patient.houseNo, patient.city].filter(Boolean).join(", ") || null,
+    address: [patient.houseNo, patient.city].filter(Boolean).join(", ") || null,
     weight: patient.weightKg ?? null,
   };
 
@@ -34,6 +37,7 @@ export default async function PatientPage({ params }: Props) {
     <div className="w-full min-w-0 space-y-6">
       <div>
         <h1 className="text-2xl font-semibold">Patient Profile</h1>
+
         <p className="text-sm text-muted-foreground">
           View patient information and medical history.
         </p>
@@ -47,9 +51,11 @@ export default async function PatientPage({ params }: Props) {
             createdAt: patientProfile.createdAt.toISOString(),
           }}
         />
+
         <PatientPrescriptions
           patientId={patient.id}
           patientName={patient.fullName}
+          prescriptions={patient.prescriptions}
         />
       </div>
     </div>

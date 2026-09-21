@@ -80,18 +80,26 @@ enum MedicineType {
   PR // per rectal
 }
 
-model Patient {
-  id          String   @id @default(cuid())
-  phone       String   @unique
-  fullName    String
-  gender      Gender?
-  weightKg    Int?
-  dateOfBirth DateTime
-  cnic        String?  @unique
+enum ChronicDisease {
+  DM
+  HTN
+  IHD
+  RA
+  Others
+}
 
-  houseNo String?
-  area    String?
-  city    String?
+model Patient {
+  id              String   @id @default(cuid())
+  phone           String   @unique
+  fullName        String
+  gender          Gender?
+  weightKg        Int?
+  dateOfBirth     DateTime
+  cnic            String?  @unique
+  medicalRecordId String?   @unique
+  houseNo         String?
+  area            String?
+  city            String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -131,15 +139,17 @@ model Prescription {
   symptoms  String
   since     DateTime
 
-  bp     String?
-  pulse  String?
-  tempF  String?
-  weight String?
-  sugar  String?
-  spo2   String?
-  rr     String?
-
-  clinicalNotes String
+  bp             String?
+  pulse          String?
+  tempF          String?
+  weight         String?
+  sugar          String?
+  spo2           String?
+  rr             String?
+  allergy        String?
+  ChronicDisease ChronicDisease[] @default([])
+  PreviousReport String?
+  clinicalNotes  String?
 
   medications Medication[]
 
@@ -165,29 +175,27 @@ model Medication {
 model Appointment {
   id String @id @default(cuid())
 
-  patient      Patient? @relation(fields: [patientId], references: [id])
-  patientId    String?
-  fee          Decimal? @db.Decimal(10, 2)
-  walkInPhone  String?
-  walkInName   String?
-  walkInGender Gender?
-  walkInAge    String?
+  patient   Patient? @relation(fields: [patientId], references: [id])
+  patientId String?
 
-  service   Service
-  date      DateTime
-  startTime DateTime
-
+  fee             Decimal?          @db.Decimal(10, 2)
+  walkInPhone     String?
+  walkInName      String?
+  walkInGender    Gender?
+  walkInAge       String?
+  service         Service
+  date            DateTime
+  startTime       DateTime
   appointmentType AppointmentType
   complaints      String?
   notes           String?
   recurring       DateTime?
-
-  status AppointmentStatus @default(CONFIRMED)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  status          AppointmentStatus @default(CONFIRMED)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   @@index([date, startTime])
+  @@index([startTime])
   @@index([patientId, date])
 }
 
@@ -202,25 +210,25 @@ enum TaskStatus {
 }
 
 model Task {
-  id            String      @id @default(cuid())
+  id String @id @default(cuid())
 
-  type          TaskType
-  referenceId   String
+  type        TaskType
+  referenceId String
 
-  assignedRole  Role
-  status        TaskStatus  @default(PENDING)
+  assignedRole Role
+  status       TaskStatus @default(PENDING)
 
-  notes         String?
+  notes String?
 
-  createdById   String
-  createdBy     User        @relation("CreatedTasks", fields: [createdById], references: [id])
+  createdById String
+  createdBy   User   @relation("CreatedTasks", fields: [createdById], references: [id])
 
   completedById String?
-  completedBy   User?       @relation("CompletedTasks", fields: [completedById], references: [id])
+  completedBy   User?     @relation("CompletedTasks", fields: [completedById], references: [id])
   completedAt   DateTime?
 
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([assignedRole, status])
   @@index([type, referenceId])

@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { MoreHorizontal, Pencil, Plus, Trash, View } from "lucide-react";
 import { usePaginatedResource } from "@/hooks/use-pagination";
 import { ResourceListPage, Column } from "@/components/resource-list";
 import { FormDialog } from "@/components/form-dialog";
@@ -22,20 +22,8 @@ import { removePatientAction } from "./actions";
 import { useState } from "react";
 import { EditPatientForm } from "@/components/edit/edit-patient-form";
 import { useRouter } from "next/navigation";
+import { Patient } from "@/app/types/patient.types";
 
-type Patient = {
-  id: string;
-  fullName: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: "MALE" | "FEMALE" | null;
-  weightKg: number | null;
-  cnic: string | null;
-  houseNo: string | null;
-  area: string | null;
-  city: string | null;
-  createdAt: string
-};
 
 
 
@@ -116,6 +104,7 @@ export default function PatientsPage() {
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <Link href={`/dashboard/patients/${patient.id}`}>
+                  <View className="mr-2 size-4" />
                   View patient
                 </Link>
               </DropdownMenuItem>
@@ -123,6 +112,7 @@ export default function PatientsPage() {
               <FormDialog
                 trigger={
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Pencil className="mr-2 size-4" />
                     Edit patient
                   </DropdownMenuItem>
                 }
@@ -146,6 +136,7 @@ export default function PatientsPage() {
                   onSelect={(e) => e.preventDefault()}
                   className="text-destructive focus:text-destructive"
                 >
+                  <Trash className="mr-2 size-4" />
                   Remove patient
                 </DropdownMenuItem>
               </AlertDialogTrigger>

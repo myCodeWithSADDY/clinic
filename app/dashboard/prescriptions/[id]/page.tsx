@@ -8,6 +8,7 @@ import { PrescriptionService } from "@/app/services/prescription.service";
 
 import EditPrescriptionDialog from "@/components/edit/edit-prescription-dialog";
 import { ArrowLeft } from "lucide-react";
+import CollapsibleSection from "@/components/collapsible-section";
 
 type PageProps = {
   params: Promise<{
@@ -126,38 +127,6 @@ export default async function PrescriptionViewPage({ params }: PageProps) {
           </div>
         </CardContent>
       </Card>
-
-      {/* Vitals */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Vitals</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-            <Vital label="Blood Pressure" value={prescription.bp} />
-            <Vital label="Pulse" value={prescription.pulse} />
-            <Vital label="Temperature (F)" value={prescription.tempF} />
-            <Vital label="Weight" value={prescription.weight} />
-            <Vital label="Sugar" value={prescription.sugar} />
-            <Vital label="SpO₂" value={prescription.spo2} />
-            <Vital label="Respiratory Rate" value={prescription.rr} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Clinical Notes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Clinical Notes</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <p className="whitespace-pre-wrap">{prescription.clinicalNotes}</p>
-        </CardContent>
-      </Card>
-
-      {/* Medications */}
       <Card>
         <CardHeader>
           <CardTitle>Medications ({prescription.medications.length})</CardTitle>
@@ -198,6 +167,77 @@ export default async function PrescriptionViewPage({ params }: PageProps) {
           )}
         </CardContent>
       </Card>
+
+      {/* Vitals */}
+      <CollapsibleSection title="Vitals">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          <Vital label="Blood Pressure" value={prescription.bp} />
+          <Vital label="Pulse" value={prescription.pulse} />
+          <Vital label="Temperature (F)" value={prescription.tempF} />
+          <Vital label="Weight" value={prescription.weight} />
+          <Vital label="Sugar" value={prescription.sugar} />
+          <Vital label="SpO₂" value={prescription.spo2} />
+          <Vital label="Respiratory Rate" value={prescription.rr} />
+        </div>
+      </CollapsibleSection>
+
+      {/* Clinical Notes */}
+      <CollapsibleSection title="Medical History" defaultOpen={false}>
+        <div className="space-y-6">
+          {/* Allergy */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">Allergy</p>
+
+            <p className="mt-1 whitespace-pre-wrap">
+              {prescription.allergy ?? "Not specified"}
+            </p>
+          </div>
+
+          {/* Chronic / Systemic Illnesses */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Chronic / Systemic Illnesses
+            </p>
+
+            {prescription.ChronicDisease?.length ? (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {prescription.ChronicDisease.map((disease) => (
+                  <Badge key={disease} variant="secondary">
+                    {disease
+                      .replace(/_/g, " ")
+                      .replace(/\b\w/g, (char) => char.toUpperCase())}
+                  </Badge>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-1 text-sm">Not specified</p>
+            )}
+          </div>
+
+          {/* Clinical Notes */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Clinical Notes
+            </p>
+
+            <p className="mt-1 whitespace-pre-wrap">
+              {prescription.clinicalNotes ?? "Not specified"}
+            </p>
+          </div>
+
+          {/* Previous Report */}
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Previous Report
+            </p>
+
+            <p className="mt-1 whitespace-pre-wrap">
+              {prescription.PreviousReport ?? "Not specified"}
+            </p>
+          </div>
+        </div>
+      </CollapsibleSection>
+      {/* Medications */}
 
       {/* Footer metadata */}
       <div className="border-t pt-4 text-xs text-muted-foreground">

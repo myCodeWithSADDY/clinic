@@ -32,6 +32,7 @@ import {
   PlusIcon,
   MinusIcon,
   LogOut,
+  CrossIcon,
 } from "lucide-react";
 
 // Clinic navigation. Each top-level item with sub-items renders as a
@@ -79,12 +80,7 @@ const data: { navMain: NavItem[] } = {
         },
       ],
     },
-    {
-      title: "Administration",
-      url: "/dashboard/staff",
-      roles: ["DOCTOR"], // no separate admin role -- doctor manages staff for now
-      items: [{ title: "Staff", url: "/dashboard/staff" }],
-    },
+    
   ],
 };
 
@@ -101,41 +97,48 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }
 
   return (
-    <Sidebar {...props}>
-      <SidebarHeader>
+    <Sidebar
+      {...props}
+      className="border-r border-slate-700/60 bg-slate-900 text-slate-50 shadow-[0_0_40px_rgba(15,23,42,0.15)]"
+    >
+      <SidebarHeader className="border-b border-white/10 p-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <Link href="/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEndIcon className="size-4" />
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className="rounded-xl px-2 hover:bg-white/5"
+            >
+              <Link href="/dashboard" className="w-full">
+                <div className="flex size-8 items-center justify-center rounded-md bg-cyan-500 text-primary-foreground">
+                  <CrossIcon className="size-4" />
                 </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-medium">Clinic Portal</span>
-                  <span className="">v1.0.0</span>
+                <div className="flex flex-col gap-0.5 leading-none text-left">
+                  <span className="font-semibold tracking-wide text-white">
+                    Clinic Portal
+                  </span>
+                  <span className="text-xs text-slate-400">v1.0.0</span>
                 </div>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
-        <SearchForm />
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="px-3 py-4">
         <SidebarGroup>
-          <SidebarMenu>
+          <SidebarMenu className="space-y-1">
             {data.navMain
               .filter(
                 (item) => !item.roles || item.roles.includes(user?.role ?? ""),
               )
               .map((item) => {
-                // No sub-items -- render as a plain link (e.g. Dashboard)
                 if (!item.items?.length) {
                   return (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton
                         asChild
                         isActive={pathname === item.url}
-                        className="data-[active=true]:bg-black data-[active=true]:text-white data-[active=true]:hover:bg-black data-[active=true]:hover:text-white"
+                        className="rounded-xl text-slate-200 hover:bg-white/5 hover:text-white data-[active=true]:bg-gradient-to-r data-[active=true]:from-cyan-500 data-[active=true]:to-teal-500 data-[active=true]:text-white data-[active=true]:shadow-lg data-[active=true]:shadow-cyan-500/20 data-[active=true]:hover:bg-gradient-to-r data-[active=true]:hover:from-cyan-500 data-[active=true]:hover:to-teal-500"
                       >
                         <Link href={item.url}>{item.title}</Link>
                       </SidebarMenuButton>
@@ -143,8 +146,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   );
                 }
 
-                // Has sub-items -- render as a collapsible group, open by
-                // default if the current route is inside this section
                 const isSectionActive = item.items.some(
                   (sub) => pathname === sub.url,
                 );
@@ -157,21 +158,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   >
                     <SidebarMenuItem>
                       <CollapsibleTrigger asChild>
-                        <SidebarMenuButton>
+                        <SidebarMenuButton className="rounded-xl text-slate-200 hover:bg-white/5 hover:text-white data-[active=true]:bg-white/5">
                           {item.title}{" "}
                           {item.title === "Prescriptions" &&
                             user?.role === "RECEPTIONIST" &&
                             pendingCount > 0 && (
-                              <SidebarMenuBadge className="bg-destructive text-destructive-foreground">
+                              <SidebarMenuBadge className="ml-auto bg-rose-500 text-white">
                                 {pendingCount}
                               </SidebarMenuBadge>
                             )}
-                          <PlusIcon className="ml-auto group-data-[state=open]/collapsible:hidden" />
-                          <MinusIcon className="ml-auto group-data-[state=closed]/collapsible:hidden" />
+                          <PlusIcon className="ml-auto size-4 text-slate-400 group-data-[state=open]/collapsible:hidden" />
+                          <MinusIcon className="ml-auto size-4 text-slate-400 group-data-[state=closed]/collapsible:hidden" />
                         </SidebarMenuButton>
                       </CollapsibleTrigger>
                       <CollapsibleContent>
-                        <SidebarMenuSub>
+                        <SidebarMenuSub className="mt-1 space-y-1 border-l border-white/10 pl-2">
                           {item.items
                             .filter(
                               (sub) =>
@@ -183,7 +184,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 <SidebarMenuSubButton
                                   asChild
                                   isActive={pathname === sub.url}
-                                  className="data-[active=true]:bg-black data-[active=true]:text-white data-[active=true]:hover:bg-black data-[active=true]:hover:text-white"
+                                  className="rounded-lg text-slate-300 hover:bg-white/5 hover:text-white data-[active=true]:bg-cyan-500/15 data-[active=true]:text-cyan-100 data-[active=true]:shadow-none"
                                 >
                                   <Link href={sub.url}>{sub.title}</Link>
                                 </SidebarMenuSubButton>
@@ -198,17 +199,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-white/10 p-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout}>
+            <div className="mb-2 flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-300">
+              <span className="font-medium text-slate-200">Access</span>
+              <span className="rounded-full bg-cyan-500/15 px-2 py-0.5 text-cyan-200">
+                {user?.role ?? "USER"}
+              </span>
+            </div>
+            <SidebarMenuButton
+              onClick={handleLogout}
+              className="rounded-xl text-slate-200 hover:bg-rose-500/10 hover:text-white"
+            >
               <LogOut />
               <span>Log out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <SidebarRail />
+      <SidebarRail className="bg-slate-900 text-slate-300" />
     </Sidebar>
   );
 }

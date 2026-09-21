@@ -61,7 +61,6 @@ export function EditPatientForm({ patient, onSuccess }: Props) {
       });
 
       const data = await res.json();
-console.log(data);
       if (!res.ok) {
   setError(
     data.details?.[0]?.message ||
@@ -88,6 +87,10 @@ console.log(data);
         </div>
       )}
 
+      <div className="grid gap-2">
+        <Label htmlFor="fullName">{patient.medicalRecordId}</Label>
+      
+      </div>
       <div className="grid gap-2">
         <Label htmlFor="fullName">Full Name</Label>
         <Input

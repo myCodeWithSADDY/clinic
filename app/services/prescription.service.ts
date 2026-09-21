@@ -27,6 +27,9 @@ export class PrescriptionService {
         sugar: data.sugar,
         spo2: data.spo2,
         rr: data.rr,
+        previousReport: data.previousReport,
+        allergy: data.allergy,
+        ChronicDisease: data.chronicDiseases,
         fee: data.fee,
         clinicalNotes: data.clinicalNotes,
         medications: {
@@ -42,6 +45,7 @@ export class PrescriptionService {
     });
     await invalidateCache("dashboard:summary");
     await invalidateCache("dashboard:revenue:*");
+    await invalidateCache(`patient:${data.patientId}:history`);
     return created;
   }
 
@@ -160,6 +164,7 @@ export class PrescriptionService {
     });
     await invalidateCache(`prescription:${id}`);
     await invalidateCache("dashboard:revenue:*");
+    await invalidateCache(`patient:${prescription.patientId}:history`);
     return updated;
   }
   static async remove(id: string) {
@@ -179,6 +184,7 @@ export class PrescriptionService {
     await invalidateCache(`prescription:${id}`);
     await invalidateCache("dashboard:revenue:*");
     await invalidateCache("dashboard:summary");
+    await invalidateCache(`patient:${prescription.patientId}:history`);
     return deleted;
   }
 }

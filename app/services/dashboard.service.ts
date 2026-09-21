@@ -13,7 +13,6 @@ function dateKey(date: Date) {
 }
 
 export class DashboardService {
-
   static async getStats() {
     return this.getSummaryStats();
   }
@@ -35,10 +34,13 @@ export class DashboardService {
           }),
         ]);
 
-      return { totalPatients, appointmentsToday, prescriptionsToday };
+      return {
+        totalPatients,
+        appointmentsToday: appointmentsToday ?? 0,
+        prescriptionsToday: prescriptionsToday ?? 0,
+      };
     });
   }
-
 
   static async getRevenueTrend(days = 30) {
     return getOrSetCache(`dashboard:revenue:${days}`, 300, async () => {
@@ -79,7 +81,6 @@ export class DashboardService {
     });
   }
 
-
   static async getVisitorStats(days = 30) {
     return getOrSetCache(`dashboard:visitors:${days}`, 300, async () => {
       const from = startOfDay(new Date());
@@ -114,16 +115,44 @@ export class DashboardService {
     });
   }
 
+  static async quickSearch(search: string) {
+    const query = search.trim();
 
-  /// for testing
+    if (!query) {
+      return [];
+    }
 
-static async testDashboardStats() {
-  console.log("Testing dashboard stats...");
-
-  const stats = await DashboardService.getSummaryStats();
-
-  console.log("Dashboard stats:", stats);
-
-  return stats;
-}
+    return prisma.patient.findMany({
+      where: {
+        OR: [
+          {
+            fullName: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            phone: {
+              contains: query,
+            },
+          },
+          {
+            cnic: {
+              contains: query,
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        cnic: true,
+      },
+      orderBy: {
+        fullName: "asc",
+      },
+      take: 8,
+    });
+  }
 }
