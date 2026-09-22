@@ -46,7 +46,7 @@ export default async function PrescriptionInvoicePage({ params }: Props) {
       <InvoicePreview
         invoiceNumber={prescription.id.slice(0, 8).toUpperCase()}
         patientName={prescription.patient.fullName}
-        patientPhone={prescription.patient.phone}
+        patientPhone={prescription.patient.phone ?? undefined}
         date={prescription.createdAt}
         description={`Consultation - ${prescription.diagnosis}`}
         fee={fee}

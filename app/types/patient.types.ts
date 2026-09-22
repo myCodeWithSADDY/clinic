@@ -1,8 +1,8 @@
 export type Patient = {
   id: string;
   fullName: string;
-  phone: string;
-  medicalRecordId: string
+  phone: string | null;
+  medicalRecordId: string | null;
   dateOfBirth: string;
   gender: "MALE" | "FEMALE" | null;
   cnic: string | null;

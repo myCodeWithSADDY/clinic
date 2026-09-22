@@ -6,18 +6,22 @@ export type Medication = {
   medicineType: string;
   frequency: string;
   insideMedicine: string | null;
-  createdAt: string;
+  createdAt: string | Date;
 };
 
 export type Prescription = {
   id: string;
   patientId: string;
   userId: string;
+  user?: {
+    id: string;
+    fullName: string;
+  }
 
   diagnosis: string;
   disease: string;
   symptoms: string;
-  since: string;
+  since: string | Date;
 
   bp: string | null;
   pulse: string | null;
@@ -31,15 +35,15 @@ export type Prescription = {
   ChronicDisease: string[];
   clinicalNotes: string | null;
 
-  createdAt: string;
-  updatedAt: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 
   medications: Medication[];
 
-  patient: {
+  patient?: {
     id: string;
     fullName: string;
-    phone: string;
+    phone: string | null;
   };
   pendingTaskId?: string;
 };

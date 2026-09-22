@@ -12,37 +12,37 @@ export class PrescriptionService {
       throw new Error("PATIENT_NOT_FOUND");
     }
 
-  const created =  await prisma.prescription.create({
-      data: {
-        patientId: data.patientId,
-        userId,
-        diagnosis: data.diagnosis,
-        disease: data.disease,
-        symptoms: data.symptoms,
-        since: data.since,
-        bp: data.bp,
-        pulse: data.pulse,
-        tempF: data.tempF,
-        weight: data.weight,
-        sugar: data.sugar,
-        spo2: data.spo2,
-        rr: data.rr,
-        previousReport: data.previousReport,
-        allergy: data.allergy,
-        ChronicDisease: data.chronicDiseases,
-        fee: data.fee,
-        clinicalNotes: data.clinicalNotes,
-        medications: {
-          create: data.medications.map((m) => ({
-            medicine: m.medicine,
-            medicineType: m.medicineType,
-            frequency: m.frequency,
-            insideMedicine: m.insideMedicine,
-          })),
-        },
+  const created = await prisma.prescription.create({
+    data: {
+      patientId: data.patientId,
+      userId,
+      diagnosis: data.diagnosis,
+      disease: data.disease,
+      symptoms: data.symptoms,
+      since: data.since,
+      bp: data.bp,
+      pulse: data.pulse,
+      tempF: data.tempF,
+      weight: data.weight,
+      sugar: data.sugar,
+      spo2: data.spo2,
+      rr: data.rr,
+      PreviousReport: data.previousReport,
+      allergy: data.allergy,
+      ChronicDisease: data.chronicDiseases,
+      fee: data.fee,
+      clinicalNotes: data.clinicalNotes,
+      medications: {
+        create: data.medications.map((m) => ({
+          medicine: m.medicine,
+          medicineType: m.medicineType,
+          frequency: m.frequency,
+          insideMedicine: m.insideMedicine,
+        })),
       },
-      include: { medications: true, patient: true },
-    });
+    },
+    include: { medications: true, patient: true },
+  });
     await invalidateCache("dashboard:summary");
     await invalidateCache("dashboard:revenue:*");
     await invalidateCache(`patient:${data.patientId}:history`);

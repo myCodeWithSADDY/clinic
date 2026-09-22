@@ -13,31 +13,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Prescription } from "@/app/types/prescription.types";
 
-type Medication = {
-  id: string;
-  medicine: string;
-  medicineType: string;
-  frequency: string;
-  insideMedicine: string | null;
-};
-
-type Prescription = {
-  id: string;
-  diagnosis: string;
-  disease: string;
-  symptoms: string;
-  clinicalNotes: string;
-  since: string | Date;
-  createdAt: string | Date;
-
-  medications: Medication[];
-
-  user: {
-    id: string;
-    fullName: string;
-  };
-};
 
 function formatDate(date: string | Date) {
   return new Date(date).toLocaleDateString("en-PK", {
@@ -73,7 +50,7 @@ const columns: Column<Prescription>[] = [
   },
   {
     header: "Doctor",
-    cell: (p) => p.user.fullName,
+    cell: (p) => p.user?.fullName,
   },
   {
     header: "Created",
@@ -113,7 +90,7 @@ export function PatientPrescriptions({
         prescription.disease,
         prescription.symptoms,
         prescription.clinicalNotes,
-        prescription.user.fullName,
+        prescription.user?.fullName,
         medicineNames,
       ]
         .join(" ")

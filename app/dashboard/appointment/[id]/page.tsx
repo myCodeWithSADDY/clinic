@@ -81,6 +81,7 @@ export default async function AppointmentDetailPage({ params }: Props) {
               id: appointment.patient!.id,
               fullName: appointment.patient!.fullName,
               phone: appointment.patient!.phone,
+              medicalRecordId: appointment.patient!.medicalRecordId,
               dateOfBirth: appointment.patient!.dateOfBirth.toISOString(),
               gender: appointment.patient!.gender,
               cnic: appointment.patient!.cnic,

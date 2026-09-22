@@ -109,7 +109,7 @@ export function EditPatientForm({ patient, onSuccess }: Props) {
             id="phone"
             name="phone"
             type="tel"
-            defaultValue={patient.phone}
+            defaultValue={patient.phone?? undefined}
             required
             disabled={loading}
           />

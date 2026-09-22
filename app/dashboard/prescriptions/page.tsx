@@ -110,9 +110,11 @@ export default function PrescriptionsPage() {
   const columns: Column<Prescription>[] = [
     {
       header: "Patient",
-      cell: (p) => <span className="font-medium">{p.patient.fullName}</span>,
+      cell: (p) => (
+        <span className="font-medium">{p.patient?.fullName ?? "--"}</span>
+      ),
     },
-    { header: "Phone", cell: (p) => p.patient.phone },
+    { header: "Phone", cell: (p) => p.patient?.phone ?? "--" },
     { header: "Diagnosis", cell: (p) => p.diagnosis },
     { header: "Disease", cell: (p) => p.disease },
     { header: "Since", cell: (p) => formatDate(p.since) },
@@ -233,7 +235,7 @@ export default function PrescriptionsPage() {
               <AlertDialogTitle>Delete prescription?</AlertDialogTitle>
               <AlertDialogDescription>
                 This will permanently delete the prescription for{" "}
-                <strong>{prescription.patient.fullName}</strong>. This action
+                <strong>{prescription.patient?.fullName}</strong>. This action
                 cannot be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
