@@ -25,7 +25,7 @@ export function RevenueChart({ data }: { data: RevenuePoint[] }) {
   const total = data.reduce((sum, d) => sum + d.revenue, 0);
 
   return (
-    <Card className="border-0 bg-[linear-gradient(180deg,#ffffff,#f1f9ff)] shadow-[0_16px_40px_rgba(14,165,233,0.08)]">
+    <Card className="border-sky-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:border-slate-700 dark:bg-slate-900 dark:shadow-none">
       <CardHeader className="pb-3">
         <CardTitle className="flex flex-col gap-2 text-base font-medium sm:flex-row sm:items-end sm:justify-between">
           <span className="text-slate-600">Revenue (last 30 days)</span>
@@ -39,9 +39,9 @@ export function RevenueChart({ data }: { data: RevenuePoint[] }) {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.28} />
-                <stop offset="55%" stopColor="#38bdf8" stopOpacity={0.14} />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+                <stop offset="0%" stopColor="#14b8a6" stopOpacity={0.22} />
+                <stop offset="60%" stopColor="#2dd4bf" stopOpacity={0.1} />
+                <stop offset="100%" stopColor="#2dd4bf" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid
@@ -64,7 +64,7 @@ export function RevenueChart({ data }: { data: RevenuePoint[] }) {
               tickFormatter={(v) => `${v / 1000}k`}
             />
             <Tooltip
-              cursor={{ stroke: "#0ea5e9", strokeWidth: 1, strokeDasharray: "4 4" }}
+              cursor={{ stroke: "#14b8a6", strokeWidth: 1, strokeDasharray: "4 4" }}
               contentStyle={{
                 borderRadius: 16,
                 border: "1px solid #dbeafe",
@@ -80,10 +80,10 @@ export function RevenueChart({ data }: { data: RevenuePoint[] }) {
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#0ea5e9"
+              stroke="#0f9f92"
               strokeWidth={3}
               fill="url(#revenueFill)"
-              activeDot={{ r: 6, fill: "#0ea5e9", stroke: "#fff", strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: "#0f9f92", stroke: "#fff", strokeWidth: 2 }}
             />
           </AreaChart>
         </ResponsiveContainer>

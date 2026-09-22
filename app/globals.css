@@ -49,6 +49,7 @@
 }
 
 :root {
+  --font-sans: system-ui, -apple-system, "Inter", "Segoe UI", Roboto, sans-serif;
   --background: #faf9f7;
   --foreground: #211f2b;
 
@@ -85,59 +86,63 @@
 
   --radius: 1rem;
 
-  --sidebar: #211f2b;
-  --sidebar-foreground: #faf9f7;
-  --sidebar-primary: #8b74ff;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #475569;
+  --sidebar-primary: #0891b2;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #302c3c;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #8b74ff;
+  --sidebar-accent: #ecfeff;
+  --sidebar-accent-foreground: #0e7490;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #22c1c3;
 }
 
 .dark {
-  --background: #17151d;
-  --foreground: #f8f6fb;
+  --background: #16181b;
+  --foreground: #f2f3f5;
 
-  --card: #211f2b;
-  --card-foreground: #f8f6fb;
+  --card: #1e2124;
+  --card-foreground: #f2f3f5;
 
-  --popover: #211f2b;
-  --popover-foreground: #f8f6fb;
+  --popover: #1e2124;
+  --popover-foreground: #f2f3f5;
 
-  --primary: #9a87ff;
-  --primary-foreground: #17151d;
+  --primary: #22c1c3;
+  --primary-foreground: #0f172a;
 
-  --secondary: #302c3c;
-  --secondary-foreground: #f8f6fb;
+  --secondary: #26292d;
+  --secondary-foreground: #f2f3f5;
 
-  --muted: #2a2733;
-  --muted-foreground: #b5afc1;
+  --muted: #232629;
+  --muted-foreground: #9ca3af;
 
-  --accent: #342d55;
-  --accent-foreground: #f8f6fb;
+  --accent: #1c2e30;
+  --accent-foreground: #67e8e9;
 
   --destructive: #ef6b6b;
 
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.06);
 
-  --ring: #9a87ff;
+  --ring: #22c1c3;
 
-  --chart-1: #9a87ff;
-  --chart-2: #c07aff;
-  --chart-3: #f27b9b;
-  --chart-4: #e9ad62;
-  --chart-5: #67b5a5;
+  --chart-1: #22c1c3;
+  --chart-2: #0891b2;
+  --chart-3: #64748b;
+  --chart-4: #94a3b8;
+  --chart-5: #475569;
 
-  --sidebar: #100f15;
-  --sidebar-foreground: #f8f6fb;
-  --sidebar-primary: #9a87ff;
-  --sidebar-primary-foreground: #17151d;
-  --sidebar-accent: #211f2b;
-  --sidebar-accent-foreground: #f8f6fb;
+  --sidebar: #18191c;
+  --sidebar-foreground: #d1d5db;
+  --sidebar-primary: #22c1c3;
+  --sidebar-primary-foreground: #0f172a;
+  --sidebar-accent: #1c2e30;
+  --sidebar-accent-foreground: #67e8e9;
   --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #9a87ff;
+  --sidebar-ring: #22c1c3;
+}
+
+.dark body {
+  background: #16181b;
 }
 @layer base {
   * {
@@ -154,15 +159,15 @@ body {
   background:
     radial-gradient(
       circle at 0% 0%,
-      rgba(109, 74, 255, 0.12),
+      rgba(14, 165, 233, 0.1),
       transparent 28%
     ),
     radial-gradient(
       circle at 100% 100%,
-      rgba(240, 106, 143, 0.08),
+      rgba(20, 184, 166, 0.08),
       transparent 28%
     ),
-    linear-gradient(180deg, #faf9f7 0%, #f3f0f8 100%);
+    linear-gradient(180deg, #f8fafc 0%, #eef7f8 100%);
   background-attachment: fixed;
 }
 

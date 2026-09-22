@@ -46,3 +46,6 @@ AGENTS.md
 CLAUDE.md
 skills-lock.json
 /app/generated/prisma
+instacare-patients.json
+instacare-usernames.json
+patients.json

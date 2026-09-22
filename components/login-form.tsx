@@ -17,18 +17,27 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   return (
-    <form action={action} className={cn("flex flex-col gap-6", className)} {...props}>
+    <form
+      action={action}
+      className={cn(
+        "flex flex-col gap-6 rounded-3xl border border-slate-200/80 bg-white/85 p-6 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-sm sm:p-8 dark:border-slate-700 dark:bg-slate-900/80 dark:shadow-none",
+        className,
+      )}
+      {...props}
+    >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white">
+            Welcome back
+          </h1>
 
-          <p className="text-sm text-balance text-muted-foreground">
-            Enter your email below to login to your account
+          <p className="text-sm text-balance text-slate-500 dark:text-slate-400">
+            Sign in to continue to your clinic workspace
           </p>
         </div>
 
         {error && (
-          <div className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          <div className="rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
             {error}
           </div>
         )}
@@ -40,10 +49,10 @@ export function LoginForm({
             id="email"
             name="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="you@example.com"
             required
             disabled={loading}
-            className="bg-background"
+            className="h-11 rounded-xl border-slate-200 bg-slate-50/70 dark:border-slate-700 dark:bg-slate-800/70"
           />
         </Field>
 
@@ -53,7 +62,7 @@ export function LoginForm({
 
             <a
               href="#"
-              className="ml-auto text-sm text-blue-500 underline-offset-4 hover:underline"
+              className="ml-auto text-sm text-cyan-700 underline-offset-4 hover:underline dark:text-cyan-300"
             >
               Forgot your password?
             </a>
@@ -65,12 +74,12 @@ export function LoginForm({
             type="password"
             required
             disabled={loading}
-            className="bg-background"
+            className="h-11 rounded-xl border-slate-200 bg-slate-50/70 dark:border-slate-700 dark:bg-slate-800/70"
           />
         </Field>
 
         <Field>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="h-11 rounded-xl bg-cyan-600 text-white shadow-lg shadow-cyan-600/15 hover:bg-cyan-700 dark:bg-cyan-500 dark:text-slate-950 dark:hover:bg-cyan-400">
             {loading ? "Signing in..." : "Login"}
           </Button>
         </Field>

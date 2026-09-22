@@ -49,29 +49,29 @@ export async function ReceptionistDashboard() {
   const prescriptionMap = new Map(prescriptions.map((p) => [p.id, p]));
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-gradient-to-r from-slate-950 via-cyan-950 to-sky-800 p-6 text-white shadow-[0_20px_50px_rgba(14,116,144,0.18)]">
+    <div className="flex flex-col gap-5">
+      <div className="overflow-hidden rounded-3xl border border-cyan-100 bg-linear-to-br from-cyan-50 via-white to-sky-50 p-6 text-slate-900 shadow-[0_14px_36px_rgba(14,116,144,0.08)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <span className="inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-cyan-100">
+            <span className="inline-flex rounded-full border border-cyan-200 bg-white/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-700">
               Reception desk
             </span>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white">
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
               Today&apos;s Operations
             </h1>
-            <p className="mt-2 text-sm text-slate-200">
+            <p className="mt-2 text-sm text-slate-600">
               Schedule, patient flow, and pending handoffs in one place.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button asChild className="border-0 bg-white text-slate-900 hover:bg-slate-100">
+            <Button asChild className="border-0 bg-slate-900 text-white hover:bg-slate-800">
               <Link href="/dashboard/appointments/new">
                 <Plus className="mr-2 size-4" />
                 Book Walk-in
               </Link>
             </Button>
-            <Button asChild variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+            <Button asChild variant="outline" className="border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900">
               <Link href="/dashboard/patients">
                 <Users className="mr-2 size-4" />
                 Manage Patients
@@ -82,7 +82,7 @@ export async function ReceptionistDashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="border-0 bg-gradient-to-br from-white to-amber-50 shadow-[0_12px_30px_rgba(245,158,11,0.08)]">
+        <Card className="border-amber-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">
               Pending Handoffs
@@ -96,7 +96,7 @@ export async function ReceptionistDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-white to-cyan-50 shadow-[0_12px_30px_rgba(6,182,212,0.08)]">
+        <Card className="border-cyan-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">
               Today&apos;s Appointments
@@ -112,7 +112,7 @@ export async function ReceptionistDashboard() {
           </CardContent>
         </Card>
 
-        <Card className="border-0 bg-gradient-to-br from-white to-emerald-50 shadow-[0_12px_30px_rgba(16,185,129,0.08)]">
+        <Card className="border-emerald-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-slate-500">
               Total Patients
@@ -127,7 +127,7 @@ export async function ReceptionistDashboard() {
         </Card>
       </div>
 
-      <Card className="border-0 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
+      <Card className="border-slate-200/80 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
         <CardHeader>
           <CardTitle className="text-xl">Pending Prescription Handoffs</CardTitle>
         </CardHeader>
@@ -168,7 +168,7 @@ export async function ReceptionistDashboard() {
         </CardContent>
       </Card>
 
-      <Card className="border-0 shadow-[0_12px_30px_rgba(15,23,42,0.05)]">
+      <Card className="border-slate-200/80 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
         <CardHeader>
           <CardTitle className="text-xl">Today&apos;s Appointments</CardTitle>
         </CardHeader>

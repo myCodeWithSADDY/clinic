@@ -90,13 +90,14 @@ enum ChronicDisease {
 
 model Patient {
   id              String   @id @default(cuid())
-  phone           String   @unique
+  phone           String?  @unique
+  oldMrNo         String?  @unique
   fullName        String
   gender          Gender?
   weightKg        Int?
   dateOfBirth     DateTime
   cnic            String?  @unique
-  medicalRecordId String?   @unique
+  medicalRecordId String?  @unique
   houseNo         String?
   area            String?
   city            String?

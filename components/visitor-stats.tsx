@@ -11,8 +11,8 @@ type VisitorStatsData = {
 
 export function VisitorStats({ data }: { data: VisitorStatsData }) {
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      <Card>
+    <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+      <Card className="border-sky-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:border-slate-700 dark:bg-slate-900 dark:shadow-none">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Avg. Visitors / Day
@@ -25,7 +25,7 @@ export function VisitorStats({ data }: { data: VisitorStatsData }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-teal-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:border-slate-700 dark:bg-slate-900 dark:shadow-none">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Repeat Visitors
@@ -40,7 +40,7 @@ export function VisitorStats({ data }: { data: VisitorStatsData }) {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-amber-100 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.04)] dark:border-slate-700 dark:bg-slate-900 dark:shadow-none">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Repeat Rate
